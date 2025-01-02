@@ -4,12 +4,12 @@ import { TextEncoder } from 'util';
 import { resolve } from 'url';
 
 import { assert, makeLogger, translate as $t, KError, isAppriseApiEnabled } from '../helpers';
-import { APPRISE_URL } from '../shared/settings';
+import { APPRISE_URL } from '../../shared/settings';
 
 import Settings from '../models/entities/settings';
 
 import { getTranslator } from './translator';
-import DefaultSettings from '../shared/default-settings';
+import DefaultSettings from '../../shared/default-settings';
 
 const log = makeLogger('notifications');
 

@@ -26,7 +26,7 @@ import {
     unwrap,
 } from '../../helpers';
 import { ForceNumericColumn, DatetimeType } from '../helpers';
-import { DEFAULT_CURRENCY, LIMIT_ONGOING_TO_CURRENT_MONTH } from '../../shared/settings';
+import { DEFAULT_CURRENCY, LIMIT_ONGOING_TO_CURRENT_MONTH } from '../../../shared/settings';
 
 @Entity('account')
 export default class Account {

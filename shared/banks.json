@@ -253,29 +253,6 @@
     },
     {
         "backend": "woob",
-        "customFields": [
-            {
-                "default": "personeo",
-                "name": "website",
-                "type": "select",
-                "values": [
-                    {
-                        "label": "PEE, PERCO (Personeo)",
-                        "value": "personeo"
-                    },
-                    {
-                        "label": "PER Entreprises (Visiogo)",
-                        "value": "visiogo"
-                    }
-                ]
-            }
-        ],
-        "deprecated": false,
-        "name": "BNP Épargne Salariale",
-        "uuid": "bnppere"
-    },
-    {
-        "backend": "woob",
         "deprecated": false,
         "name": "Bourse direct",
         "uuid": "boursedirect"
@@ -308,29 +285,6 @@
         "deprecated": false,
         "name": "La Banque Postale",
         "uuid": "bp"
-    },
-    {
-        "backend": "woob",
-        "customFields": [
-            {
-                "name": "accnum",
-                "optional": true,
-                "type": "text"
-            },
-            {
-                "name": "device_name",
-                "optional": true,
-                "type": "text"
-            },
-            {
-                "name": "preferred_sca",
-                "optional": true,
-                "type": "text"
-            }
-        ],
-        "deprecated": false,
-        "name": "Bred",
-        "uuid": "bred"
     },
     {
         "backend": "woob",
@@ -411,12 +365,6 @@
     {
         "backend": "woob",
         "deprecated": false,
-        "name": "AXA Épargne Salariale",
-        "uuid": "capeasi"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
         "name": "Carrefour Banque",
         "uuid": "carrefourbanque"
     },
@@ -456,66 +404,8 @@
     {
         "backend": "woob",
         "deprecated": false,
-        "name": "CIC Épargne Salariale",
-        "uuid": "cices"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
         "name": "Citibank",
         "uuid": "citibank"
-    },
-    {
-        "backend": "woob",
-        "customFields": [
-            {
-                "default": "par",
-                "name": "website",
-                "type": "select",
-                "values": [
-                    {
-                        "label": "Particuliers",
-                        "value": "par"
-                    },
-                    {
-                        "label": "Professionnels",
-                        "value": "pro"
-                    }
-                ]
-            }
-        ],
-        "deprecated": false,
-        "name": "Crédit Mutuel de Bretagne",
-        "uuid": "cmb"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
-        "name": "Crédit Mutuel Épargne Salariale",
-        "uuid": "cmes"
-    },
-    {
-        "backend": "woob",
-        "customFields": [
-            {
-                "default": "par",
-                "name": "website",
-                "type": "select",
-                "values": [
-                    {
-                        "label": "Particuliers",
-                        "value": "par"
-                    },
-                    {
-                        "label": "Professionnels",
-                        "value": "pro"
-                    }
-                ]
-            }
-        ],
-        "deprecated": false,
-        "name": "Crédit Mutuel Sud-Ouest",
-        "uuid": "cmso"
     },
     {
         "backend": "woob",
@@ -778,12 +668,6 @@
     {
         "backend": "woob",
         "deprecated": false,
-        "name": "Crédit du Nord Épargne Salariale",
-        "uuid": "creditdunordpee"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
         "name": "Crédit Mutuel",
         "uuid": "creditmutuel"
     },
@@ -798,18 +682,6 @@
         "deprecated": false,
         "name": "Banque Delubac & Cie",
         "uuid": "delubac"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
-        "name": "HSBC Épargne Salariale",
-        "uuid": "erehsbc"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
-        "name": "Société Générale Épargne Salariale",
-        "uuid": "esalia"
     },
     {
         "backend": "woob",
@@ -867,12 +739,6 @@
         "deprecated": false,
         "name": "Gan Patrimoine",
         "uuid": "ganpatrimoine"
-    },
-    {
-        "backend": "woob",
-        "deprecated": false,
-        "name": "Gan Prévoyance",
-        "uuid": "ganprevoyance"
     },
     {
         "backend": "woob",
@@ -942,19 +808,6 @@
         "deprecated": false,
         "name": "HSBC France",
         "uuid": "hsbc"
-    },
-    {
-        "backend": "woob",
-        "customFields": [
-            {
-                "name": "secret",
-                "placeholderKey": "client.settings.secret_placeholder",
-                "type": "password"
-            }
-        ],
-        "deprecated": false,
-        "name": "HSBC Hong Kong",
-        "uuid": "hsbchk"
     },
     {
         "backend": "woob",
@@ -1260,29 +1113,6 @@
     },
     {
         "backend": "woob",
-        "customFields": [
-            {
-                "default": "titulaire",
-                "name": "website",
-                "type": "select",
-                "values": [
-                    {
-                        "label": "Accès Administrateur Entreprise",
-                        "value": "entreprise"
-                    },
-                    {
-                        "label": "Accès Titulaire de carte Affaires",
-                        "value": "titulaire"
-                    }
-                ]
-            }
-        ],
-        "deprecated": false,
-        "name": "Sogecarte Net",
-        "uuid": "sogecartenet"
-    },
-    {
-        "backend": "woob",
         "deprecated": false,
         "name": "Spirica",
         "uuid": "spirica"
@@ -1466,18 +1296,6 @@
         "deprecated": true,
         "name": "Paypal",
         "uuid": "paypal"
-    },
-    {
-        "backend": "woob",
-        "deprecated": true,
-        "name": "Netfinca",
-        "uuid": "netfinca"
-    },
-    {
-        "backend": "woob",
-        "deprecated": true,
-        "name": "Tickets CESU Edenred",
-        "uuid": "ticketscesu"
     },
     {
         "backend": "woob",

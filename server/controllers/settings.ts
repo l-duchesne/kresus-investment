@@ -8,7 +8,7 @@ import getNotifier from '../lib/notifications';
 import { IdentifiedRequest } from './routes';
 
 import { KError, asyncErr } from '../helpers';
-import { APPRISE_URL, EMAIL_RECIPIENT, LOCALE } from '../shared/settings';
+import { APPRISE_URL, EMAIL_RECIPIENT, LOCALE } from '../../shared/settings';
 import { resetTranslator } from '../lib/translator';
 
 function postSave(userId: number, key: string, value: string) {

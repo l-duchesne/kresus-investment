@@ -3,8 +3,8 @@ import express from 'express';
 import { Access, Budget, Category, Setting } from '../models';
 import { assert, asyncErr, KError, translate as $t } from '../helpers';
 
-import DefaultCategories from '../shared/default-categories.json';
-import { DEMO_MODE } from '../shared/settings';
+import DefaultCategories from '../../shared/default-categories.json';
+import { DEMO_MODE } from '../../shared/settings';
 
 import { IdentifiedRequest } from './routes';
 import { isDemoForced, isDemoEnabled } from './instance';

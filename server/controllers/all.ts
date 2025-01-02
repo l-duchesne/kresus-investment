@@ -34,8 +34,8 @@ import {
     getAll as getAllInstanceProperties,
     ConfigGhostSettings,
 } from '../lib/instance';
-import { validatePassword } from '../shared/helpers';
-import DefaultSettings from '../shared/default-settings';
+import { validatePassword } from '../../shared/helpers';
+import DefaultSettings from '../../shared/default-settings';
 import { DEFAULT_ACCOUNT_ID, DEMO_MODE } from '../../shared/settings';
 
 import { cleanData, Remapping } from './helpers';
@@ -250,7 +250,7 @@ export async function export_(req: IdentifiedRequest<any>, res: express.Response
             if (process.kresus.salt === null) {
                 throw new KError(
                     "server hasn't been configured for encryption; " +
-                        'please ask your administrator to provide a salt'
+                    'please ask your administrator to provide a salt'
                 );
             }
 
@@ -938,7 +938,7 @@ export async function import_(req: IdentifiedRequest<any>, res: express.Response
             if (process.kresus.salt === null) {
                 throw new KError(
                     "server hasn't been configured for encryption; " +
-                        'please ask your administrator to provide a salt'
+                    'please ask your administrator to provide a salt'
                 );
             }
 

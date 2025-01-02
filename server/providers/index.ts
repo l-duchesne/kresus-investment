@@ -3,8 +3,8 @@ import fs from 'fs';
 import { Access } from '../models';
 import { assert, KError } from '../helpers';
 
-import ALL_BANKS from '../shared/banks.json';
-import { UserActionResponse } from '../shared/types';
+import ALL_BANKS from '../../shared/banks.json';
+import { UserActionResponse } from '../../shared/types';
 
 const BANK_HANDLERS = new Map();
 

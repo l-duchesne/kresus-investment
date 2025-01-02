@@ -3,7 +3,7 @@ import express from 'express';
 import { Access, Account, Setting } from '../models';
 import { makeLogger, KError, asyncErr } from '../helpers';
 import { DEFAULT_ACCOUNT_ID } from '../../shared/settings';
-import { hasForbiddenField } from '../shared/validators';
+import { hasForbiddenField } from '../../shared/validators';
 import accountManager from '../lib/accounts-manager';
 
 import { isDemoEnabled } from './instance';

@@ -2,7 +2,7 @@ import express from 'express';
 import { Budget, Category } from '../models';
 
 import { KError, asyncErr } from '../helpers';
-import { checkBudget } from '../shared/validators';
+import { checkBudget } from '../../shared/validators';
 import { IdentifiedRequest, PreloadedRequest } from './routes';
 
 async function createBudget(

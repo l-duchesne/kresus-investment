@@ -16,7 +16,7 @@ import {
     WOOB_INSTALLED,
     WOOB_VERSION,
     DEV_ENV,
-} from '../shared/instance';
+} from '../../shared/instance';
 
 export type InstancePropertiesType = { [key: string]: string };
 

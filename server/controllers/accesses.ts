@@ -12,7 +12,7 @@ import { isDemoEnabled } from './instance';
 import { IdentifiedRequest, PreloadedRequest } from './routes';
 
 import { assert, asyncErr, getErrorCode, KError, makeLogger, unwrap } from '../helpers';
-import { hasMissingField, hasForbiddenField } from '../shared/validators';
+import { hasMissingField, hasForbiddenField } from '../../shared/validators';
 
 const log = makeLogger('controllers/accesses');
 

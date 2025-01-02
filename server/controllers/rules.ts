@@ -5,9 +5,9 @@ import {
     hasForbiddenField,
     hasMissingField,
     hasForbiddenOrMissingField,
-} from '../shared/validators';
+} from '../../shared/validators';
 import { IdentifiedRequest, PreloadedRequest } from './routes';
-import type { TransactionRuleConditionType } from '../shared/types';
+import type { TransactionRuleConditionType } from '../../shared/types';
 
 export const conditionTypesList: TransactionRuleConditionType[] = [
     'label_matches_text',

@@ -1,7 +1,7 @@
 import express from 'express';
 import { asyncErr, KError } from '../helpers';
 import { Account, RecurringTransaction } from '../models';
-import { hasForbiddenOrMissingField } from '../shared/validators';
+import { hasForbiddenOrMissingField } from '../../shared/validators';
 import { IdentifiedRequest, PreloadedRequest } from './routes';
 
 export async function preload(

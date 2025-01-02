@@ -1,5 +1,5 @@
 import { makeLogger, panic } from '../helpers';
-import AccountTypes from '../shared/account-types.json';
+import AccountTypes from '../../shared/account-types.json';
 
 const log = makeLogger('lib/account-types');
 

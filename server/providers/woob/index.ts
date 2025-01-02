@@ -19,8 +19,8 @@ import {
     GENERIC_EXCEPTION,
     INVALID_PASSWORD,
     EXPIRED_PASSWORD,
-} from '../../shared/errors.json';
-import { UserActionField, UserActionKind, UserActionResponse } from '../../shared/types';
+} from '../../../shared/errors.json';
+import { UserActionField, UserActionKind, UserActionResponse } from '../../../shared/types';
 
 import {
     Provider,

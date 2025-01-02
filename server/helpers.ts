@@ -16,9 +16,9 @@ import {
     TRANSACTION_CARD_TYPE,
     DEFERRED_CARD_TYPE,
     INTERNAL_TRANSFER_TYPE,
-} from './shared/helpers';
+} from '../shared/helpers';
 
-import errors from './shared/errors.json';
+import errors from '../shared/errors.json';
 import Logger from './lib/logger';
 
 export {

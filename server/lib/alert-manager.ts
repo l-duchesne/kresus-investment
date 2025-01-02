@@ -4,7 +4,7 @@ import { Account, Access, Alert, Transaction } from '../models';
 
 import getNotifier from './notifications';
 import getEmailer from './emailer';
-import { I18NObject } from '../shared/helpers';
+import { I18NObject } from '../../shared/helpers';
 import { getTranslator } from './translator';
 
 const log = makeLogger('alert-manager');

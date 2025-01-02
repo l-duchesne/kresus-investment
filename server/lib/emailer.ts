@@ -4,7 +4,7 @@ import SendMail from 'nodemailer/lib/sendmail-transport';
 import Mail from 'nodemailer/lib/mailer';
 
 import { assert, makeLogger, translate as $t, isEmailEnabled } from '../helpers';
-import { EMAIL_RECIPIENT } from '../shared/settings';
+import { EMAIL_RECIPIENT } from '../../shared/settings';
 
 import { Setting } from '../models';
 import { getTranslator } from './translator';

@@ -2,7 +2,7 @@ import regexEscape from 'regex-escape';
 
 import { assert, makeLogger } from '../helpers';
 import { ConfigGhostSettings } from '../lib/instance';
-import DefaultSettings from '../shared/default-settings';
+import DefaultSettings from '../../shared/default-settings';
 import { DEFAULT_ACCOUNT_ID } from '../../shared/settings';
 
 import {

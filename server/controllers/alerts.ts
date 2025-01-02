@@ -2,7 +2,7 @@ import express from 'express';
 
 import { Account, Alert } from '../models';
 import { asyncErr, KError } from '../helpers';
-import { checkAlert } from '../shared/validators';
+import { checkAlert } from '../../shared/validators';
 
 import { IdentifiedRequest, PreloadedRequest } from './routes';
 

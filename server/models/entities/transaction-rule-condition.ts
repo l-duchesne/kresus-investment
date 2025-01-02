@@ -3,7 +3,7 @@ import { unwrap } from '../../helpers';
 
 import { getRepository } from '..';
 
-import { TransactionRuleConditionType } from '../../shared/types';
+import { TransactionRuleConditionType } from '../../../shared/types';
 import TransactionRule from './transaction-rule';
 
 import User from './users';

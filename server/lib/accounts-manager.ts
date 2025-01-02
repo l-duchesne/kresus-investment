@@ -14,7 +14,7 @@ import {
 import { accountTypeIdToName } from './account-types';
 import { transactionTypeIdToName } from './transaction-types';
 import applyRules from './rule-engine';
-import errors from '../shared/errors.json';
+import errors from '../../shared/errors.json';
 
 import { getProvider, ProviderAccount, ProviderTransaction } from '../providers';
 import { SOURCE_NAME as MANUAL_BANK_NAME } from '../providers/manual';
@@ -36,8 +36,8 @@ import {
     WOOB_AUTO_MERGE_ACCOUNTS,
     WOOB_ENABLE_DEBUG,
     WOOB_FETCH_THRESHOLD,
-} from '../shared/settings';
-import { SharedTransaction, UserActionResponse } from '../shared/types';
+} from '../../shared/settings';
+import { SharedTransaction, UserActionResponse } from '../../shared/types';
 
 import AsyncQueue from './async-queue';
 import alertManager from './alert-manager';

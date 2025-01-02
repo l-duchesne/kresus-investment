@@ -1,5 +1,5 @@
 import { makeLogger } from './helpers';
-import { DEMO_MODE } from './shared/settings';
+import { DEMO_MODE } from '../shared/settings';
 
 import { initModels, Setting } from './models';
 import Poller from './lib/poller';

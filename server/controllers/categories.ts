@@ -2,7 +2,7 @@ import express from 'express';
 
 import { Budget, Category, Transaction } from '../models';
 import { makeLogger, KError, asyncErr } from '../helpers';
-import { hasForbiddenOrMissingField, hasForbiddenField } from '../shared/validators';
+import { hasForbiddenOrMissingField, hasForbiddenField } from '../../shared/validators';
 
 import { IdentifiedRequest, PreloadedRequest } from './routes';
 import { updateCategorizeRules } from '../lib/rule-engine';

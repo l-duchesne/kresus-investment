@@ -5,10 +5,10 @@ import { Setting } from '../models';
 import * as woob from '../providers/woob';
 import getEmailer from '../lib/emailer';
 import { sendTestNotification } from '../lib/notifications';
-import { WOOB_NOT_INSTALLED } from '../shared/errors.json';
+import { WOOB_NOT_INSTALLED } from '../../shared/errors.json';
 
 import { KError, asyncErr, checkMinimalWoobVersion, UNKNOWN_WOOB_VERSION } from '../helpers';
-import { DEMO_MODE } from '../shared/settings';
+import { DEMO_MODE } from '../../shared/settings';
 import { IdentifiedRequest } from './routes';
 
 export async function getWoobVersion(_req: express.Request, res: express.Response) {

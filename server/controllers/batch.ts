@@ -2,7 +2,7 @@ import { IdentifiedRequest } from './routes';
 import express from 'express';
 import { asyncErr } from '../helpers';
 import { createOneCategory, destroyOneCategory } from './categories';
-import { BatchRequest, BatchResponse, BatchStatus } from '../shared/api/batch';
+import { BatchRequest, BatchResponse, BatchStatus } from '../../shared/api/batch';
 
 // Run batch operations.
 //

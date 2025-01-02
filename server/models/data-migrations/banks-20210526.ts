@@ -41,14 +41,14 @@ export async function updateBanks(userId: number | null, manager: EntityManager)
 
     // Remove the "website" field from the bred module; it's now unused.
 
-    log.info('> Removing website on bred...');
-    accesses = await manager.find(Access, {
-        select: ['id'],
-        where: {
-            vendorId: 'bred',
-            ...userCondition,
-        },
-    });
+    //   log.info('> Removing website on bred...');
+    //  accesses = await manager.find(Access, {
+    //       select: ['id'],
+    //       where: {
+    //           vendorId: 'bred',
+    //           ...userCondition,
+    //      },
+    //   });
 
     if (accesses.length > 0) {
         await manager.delete(AccessField, {
