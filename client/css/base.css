@@ -1,0 +1,34 @@
+/**
+ * This file is the base CSS file, containing a minimum set of directives
+ * which are common to all themes and ensure a consistent rendering.
+ */
+
+/**
+ * Since all the imports must be done before declaring any other rule, we
+ * declare the structure and global rules (ex: body, html, *) in a dedicated
+ * file and import it first.
+ */
+@import url('./structure.css');
+
+@import url('./sprite.css');
+
+@import url('./ui/buttons.css');
+@import url('./ui/tables.css');
+@import url('./ui/alerts.css');
+@import url('./ui/input-with-addon.css');
+@import url('./ui/buttons-group.css');
+@import url('./ui/label-component.css');
+@import url('./ui/tabs.css');
+@import url('./ui/before-load.css');
+@import url('./ui/accessibility.css');
+@import url('./ui/tooltips.css');
+
+@import url('./helpers.css');
+
+@import url('./layout.css');
+
+@import url('./fonts.css');
+@import url('./icons.css');
+@import url('./forms.css');
+
+@import url('./theme.css');

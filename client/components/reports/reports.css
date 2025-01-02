@@ -1,0 +1,273 @@
+.transaction-table {
+    font-size: 14px;
+    border: 0;
+}
+
+.transaction-table tr.month-year-separator {
+    border-right: none;
+    text-align: left;
+    font-weight: bold;
+}
+
+.transaction-table tr.month-year-separator:hover {
+    background-color: transparent;
+}
+
+.transaction-table > thead > tr > td,
+.transaction-table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.transaction-table td.date {
+    white-space: nowrap;
+}
+
+.transaction-table td.date > * {
+    vertical-align: middle;
+}
+
+.transaction-table td > * {
+    overflow-y: hidden;
+}
+
+.transaction-table thead tr > th {
+    border-bottom: 0;
+}
+
+.transaction-table thead tr > th.details-button {
+    width: 1em;
+}
+
+.transaction-table thead tr > th.date {
+    width: calc(8ex + 20px);
+}
+
+.transaction-table thead tr > th.type {
+    width: 18%;
+}
+
+@media screen and (min-width: 1600px) {
+    body.fluid .transaction-table thead tr > th.type {
+        width: 260px;
+    }
+}
+
+.transaction-table thead tr > th.amount {
+    width: 10%;
+
+    /**
+     * Some large cells on mobile can make the
+     * scrolling kind of flickering by having the title's cell width
+     * vary when the table adjusts itself (rows are appended to the
+     * DOM on the fly as the user scrolls).
+     * By defining a minimum width (~12 chars' width) we prevent this.
+     */
+    min-width: 12ex;
+}
+
+.transaction-table thead tr > th.category {
+    width: 22%;
+}
+
+.transaction-table .transaction-assigned-to-budget {
+    cursor: default !important;
+    margin-left: 5px;
+}
+
+@media screen and (max-width: 768px) {
+    /* Decrease the date column width */
+    .transaction-table thead tr > th.date {
+        width: 8ex;
+    }
+
+    .transaction-table thead tr > th.category {
+        width: 5px;
+        padding: 0;
+    }
+
+    /*
+    * WebKit hack: by setting a relative position to the cell, its width will not be
+    * calculated according to its content, which is wrong if the content is too
+    * wide.
+    *
+    * The height is smaller in xs-mode.
+    */
+    .transaction-table td {
+        position: relative;
+        height: 41px;
+    }
+
+    /* Force the max height of the children to ensure a fixed height for the infinite list */
+    .transaction-table td > * {
+        max-height: 19px;
+        height: inherit;
+    }
+
+    /**
+     * The transactions table width is equal to a 100% width + the 2 swipable actions' width (200px).
+     * The cells are then translated 100px to the left, making the left swipe action invisible, and
+     * the right swipe action is hidden by hiding the overflow.
+     * On swipe, the cells are translated back to the left or right, making the swipable actions
+     * visible.
+     */
+    .transaction-table-wrapper {
+        overflow-x: hidden;
+    }
+
+    .transaction-table {
+        /* 200px = twice the swipable action column */
+        width: calc(100% + 200px);
+        max-width: calc(100% + 200px);
+        overflow: hidden;
+    }
+
+    .transaction-table td.category {
+        padding: 0;
+    }
+
+    .transaction-table th.swipable-action {
+        width: 100px;
+        visibility: hidden;
+    }
+
+    .transaction-table td.swipable-action {
+        text-align: center;
+    }
+
+    .transaction-table td.swipable-action > .fa {
+        display: inline-flex;
+        color: inherit;
+    }
+
+    .transaction-table tr:not(.month-year-separator) > * {
+        translate: -100px;
+    }
+
+    .transaction-table tr.swiped .swipable-action {
+        width: 100px;
+        background-color: #DDDDDD;
+    }
+
+    body.dark .transaction-table tr.swiped .swipable-action {
+        background-color: #444444;
+    }
+
+    .transaction-table tr.swiped .swipable-action > :first-child {
+        margin-right: 1ex;
+    }
+
+    .transaction-table tr.swiped .swipable-action-left {
+        text-align: right;
+    }
+
+    .transaction-table tr.swiped .swipable-action-right {
+        text-align: left;
+    }
+
+    .transaction-table tr.swiped-effective .swipable-action-left,
+    body.dark .transaction-table tr.swiped-effective .swipable-action-left {
+        background-color: #00BFF3;
+        color: white;
+    }
+
+    .transaction-table tr.swiped-effective .swipable-action-right,
+    body.dark .transaction-table tr.swiped-effective .swipable-action-right {
+        background-color: #F30000;
+        color: white;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .transaction-table td {
+        position: relative;
+        height: 54px;
+    }
+
+    /* Force the max height of the children to ensure a fixed height for the infinite list */
+    .transaction-table td > * {
+        max-height: 34px;
+        overflow: hidden;
+    }
+
+    .transaction-table td > div {
+        position: relative;
+        max-width: 100%;
+    }
+
+    /* The types, label and category inputs/selectors have a hidden border & padding by default,
+     * which shifts the text by 12px. Adding an indent here aligns the column headers with their
+     * content. On mobile there is only the text, no form elements. */
+    .transaction-table thead tr > th.type,
+    .transaction-table thead tr > th.label,
+    .transaction-table thead tr > th.category {
+        text-indent: 12px;
+    }
+}
+
+.transaction-table td > .Select {
+    overflow: visible;
+    z-index: auto;
+}
+
+.transaction-table thead th {
+    border-top: none;
+}
+
+.transaction-table td {
+    vertical-align: middle;
+}
+
+.transaction-table th,
+.transaction-table td {
+    border-left: 0;
+    border-right: 0;
+}
+
+.transaction-table tr:nth-last-child(2) td {
+    border: 0;
+}
+
+.transaction-table td.amount {
+    font-weight: bold;
+}
+
+.transaction-table > tbody > tr.income td.amount {
+    color: #38BD13;
+}
+
+.transaction-table td.category span.categoryColor {
+    position: absolute;
+    display: inline-block;
+    width: 5px;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    max-height: none;
+    background-color: #717171;
+}
+
+body.dark .transaction-table td.category span.categoryColor {
+    background-color: #FFFFFF;
+}
+
+@media (max-width: 620px) {
+    .transaction-table th,
+    .transaction-table td {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+body.dark .transaction-table th,
+body.dark .transaction-table td {
+    border-color: #444444;
+}
+
+body.dark .transaction-table > tbody > tr.income td.amount {
+    color: #00BFF3;
+}
+
+body.dark .transaction-table td.details-button > a {
+    color: inherit;
+}

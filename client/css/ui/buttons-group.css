@@ -1,0 +1,33 @@
+/* Buttons group: collapse borders between buttons */
+.buttons-group {
+    white-space: nowrap;
+}
+
+.buttons-group > button:not(:last-child, :active, .active) {
+    border-right-width: 0;
+}
+
+.buttons-group > button:active + button,
+.buttons-group > button.active + button {
+    border-left-width: 0;
+}
+
+.buttons-group > button:not(:first-child, :only-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.buttons-group > button:not(:last-child, :only-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.buttons-group > .inner-text {
+    background: unset;
+    color: unset;
+    cursor: unset;
+    box-shadow: unset;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+}

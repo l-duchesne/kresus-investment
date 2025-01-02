@@ -1,0 +1,82 @@
+[
+    {
+        "woob_id": 0,
+        "name": "account-type.unknown"
+    },
+    {
+        "woob_id": 1,
+        "name": "account-type.checking"
+    },
+    {
+        "woob_id": 2,
+        "name": "account-type.savings"
+    },
+    {
+        "woob_id": 3,
+        "name": "account-type.deposit"
+    },
+    {
+        "woob_id": 4,
+        "name": "account-type.loan"
+    },
+    {
+        "woob_id": 5,
+        "name": "account-type.market"
+    },
+    {
+        "woob_id": 6,
+        "name": "account-type.joint"
+    },
+    {
+        "woob_id": 7,
+        "name": "account-type.card"
+    },
+    {
+        "woob_id": 8,
+        "name": "account-type.life_insurance"
+    },
+    {
+        "woob_id": 9,
+        "name": "account-type.pee"
+    },
+    {
+        "woob_id": 10,
+        "name": "account-type.perco"
+    },
+    {
+        "woob_id": 11,
+        "name": "account-type.article_83"
+    },
+    {
+        "woob_id": 12,
+        "name": "account-type.rsp"
+    },
+    {
+        "woob_id": 13,
+        "name": "account-type.pea"
+    },
+    {
+        "woob_id": 14,
+        "name": "account-type.capitalisation"
+    },
+    {
+        "woob_id": 15,
+        "name": "account-type.perp"
+    },
+    {
+        "woob_id": 16,
+        "name": "account-type.madelin"
+    },
+    {
+        "woob_id": 17,
+        "name": "account-type.mortgage"
+    },
+    {
+        "woob_id": 18,
+        "name": "account-type.consumer_credit"
+    },
+    {
+        "woob_id": 19,
+        "name": "account-type.revolving_credit"
+    }
+]

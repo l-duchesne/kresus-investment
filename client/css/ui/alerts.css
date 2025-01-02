@@ -1,0 +1,41 @@
+.alerts {
+    padding: 1em;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    text-shadow: 0 1px 0 hsl(0deg 0% 100% / 20%);
+    box-shadow: inset 0 1px 0 hsl(0deg 0% 100% / 25%), 0 1px 2px rgb(0 0 0 / 5%);
+    background-repeat: repeat-x;
+    background-image: none;
+}
+
+.alerts.with-action {
+    display: flex;
+    align-items: center;
+}
+
+.alerts.with-action > *:first-child {
+    flex: auto;
+}
+
+.alerts.info {
+    color: #31708F;
+    border-color: #9ACFEA;
+    background-color: #D9EDF7;
+}
+
+.alerts.warning {
+    color: #8A6D3B;
+    border-color: #F5E79E;
+    background-color: #FCF8E3;
+}
+
+.alerts .fa:first-child {
+    margin-right: 0.5em;
+}
+
+body.dark .alerts a,
+body.dark .alerts a:hover,
+body.dark .alerts a:focus {
+    color: inherit;
+    text-decoration: underline;
+}

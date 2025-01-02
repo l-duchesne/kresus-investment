@@ -1,0 +1,46 @@
+.transaction-toolbar {
+    margin-bottom: 1em;
+    padding: 0;
+}
+
+.transaction-toolbar ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    align-items: stretch;
+    gap: 1em;
+}
+
+.transaction-toolbar ul li {
+    list-style: none;
+    display: inline-flex;
+}
+
+.transaction-toolbar ul li:first-child {
+    flex-grow: 1;
+}
+
+.transaction-toolbar ul li button {
+    height: 100%;
+    white-space: normal;
+    display: inline-flex;
+    align-items: center;
+}
+
+.transaction-toolbar > form {
+    padding: 1em 0;
+}
+
+@media screen and (max-width: 768px) {
+    .transaction-toolbar li:first-child button .fa {
+        margin-right: 0;
+    }
+
+    .transaction-toolbar li:last-child button .fa {
+        margin-left: 0;
+    }
+
+    .transaction-toolbar button .label {
+        display: none;
+    }
+}
