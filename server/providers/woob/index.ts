@@ -29,6 +29,7 @@ import {
     SessionManager,
     ProviderAccountResponse,
     ProviderTransactionResponse,
+    ProviderInvestmentsResponse,
 } from '../';
 
 const log = makeLogger('providers/woob');
@@ -213,6 +214,7 @@ enum CallWoobCommand {
     Version,
     Transactions,
     Accounts,
+    Investments
 }
 
 function commandName(command: CallWoobCommand) {
@@ -223,6 +225,8 @@ function commandName(command: CallWoobCommand) {
             return 'version';
         case CallWoobCommand.Transactions:
             return 'transactions';
+        case CallWoobCommand.Investments:
+            return 'investment';
         case CallWoobCommand.Accounts:
             return 'accounts';
         default:
@@ -255,6 +259,10 @@ async function callWoob(
         }
         case CallWoobCommand.Accounts: {
             textCommand = 'accounts';
+            break;
+        }
+        case CallWoobCommand.Investments: {
+            textCommand = 'investment';
             break;
         }
         default: {
@@ -290,7 +298,7 @@ async function callWoob(
     }
 
     const env: OptionalEnvParams = {};
-    if (command === CallWoobCommand.Accounts || command === CallWoobCommand.Transactions) {
+    if (command === CallWoobCommand.Accounts || command === CallWoobCommand.Transactions || command === CallWoobCommand.Investments) {
         assert(access !== null, 'Access must not be null for accounts/transactions.');
 
         cliArgs.push('--module', access.vendorId, '--login', access.login);
@@ -474,6 +482,26 @@ export async function fetchTransactions(
     );
 }
 
+
+export async function fetchInvestments(
+    { access, debug, fromDate, isInteractive, userActionFields }: FetchTransactionsOptions,
+    sessionManager: SessionManager
+): Promise<ProviderInvestmentsResponse | UserActionResponse> {
+    return await _fetchHelper<ProviderInvestmentsResponse>(
+        CallWoobCommand.Investments,
+        {
+            ...defaultOptions(),
+            debug,
+            isInteractive,
+            fromDate,
+            userActionFields,
+        },
+        sessionManager,
+        access
+    );
+}
+
+
 export const SOURCE_NAME = 'woob';
 
 // It's not possible to type-check the exports themselves, so make a synthetic
@@ -483,6 +511,7 @@ export const _: Provider = {
     SOURCE_NAME: 'woob',
     fetchAccounts,
     fetchTransactions,
+    fetchInvestments
 };
 
 export async function getVersion(forceFetch = false) {

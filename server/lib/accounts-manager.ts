@@ -16,7 +16,7 @@ import { transactionTypeIdToName } from './transaction-types';
 import applyRules from './rule-engine';
 import errors from '../../shared/errors.json';
 
-import { getProvider, ProviderAccount, ProviderTransaction } from '../providers';
+import { getProvider, ProviderAccount, ProviderInvestments, ProviderTransaction } from '../providers';
 import { SOURCE_NAME as MANUAL_BANK_NAME } from '../providers/manual';
 
 import {
@@ -45,6 +45,7 @@ import diffAccounts from './diff-accounts';
 import diffTransactions from './diff-transactions';
 import filterDuplicateTransactions from './filter-duplicate-transactions';
 import SessionManager from './session-manager';
+import Investment from '../models/entities/investments';
 
 const log = makeLogger('accounts-manager');
 
@@ -255,6 +256,11 @@ interface AccountsAndTransactions {
     createdTransactions: Transaction[];
 }
 
+interface AccountsAndInvestments {
+    accounts: Account[];
+    createdInvestments: Investment[];
+}
+
 async function preparePollTransactions(
     userId: number,
     accounts: Account[],
@@ -385,6 +391,57 @@ function normalizeTransaction(
     return tr;
 }
 
+
+function normalizeInvestment(
+    vendorToOwnAccountIdMap: Map<string, number>,
+    providerTr: ProviderInvestments
+): Partial<Investment> | null {
+    if (!vendorToOwnAccountIdMap.has(providerTr.account)) {
+        log.error(
+            `Transaction attached to an unknown account (vendor id: ${providerTr.account}), skipping`
+        );
+        return null;
+    }
+
+    if (!providerTr.label) {
+        log.error('Transaction without raw label or label, skipping');
+        return null;
+    }
+
+    if (providerTr.externalId && providerTr.externalId.endsWith('&activeTab=resume')) {
+        providerTr.externalId = providerTr.externalId.replace('providerTr.externalId', '')
+    }
+
+    let type = 'unknown'
+
+    if (providerTr.code == 'XX-liquidity') {
+        type = 'money'
+    }
+
+    if (providerTr.label.indexOf('ETF') > 0) {
+        type = 'actions'
+    }
+
+    const tr: Partial<Investment> = {
+        accountId: vendorToOwnAccountIdMap.get(providerTr.account),
+        quantity: Number.parseFloat(providerTr.quantity),
+        type: type,
+        externalId: providerTr.externalId,
+        diff: Number.parseFloat(providerTr.diff ? providerTr.diff : "0"),
+        diff_ratio: Number.parseFloat(providerTr.diff_ratio ? providerTr.diff_ratio : "0"),
+        unitprice: Number.parseFloat(providerTr.unitprice),
+        unitvalue: Number.parseFloat(providerTr.unitvalue),
+        valuation: Number.parseFloat(providerTr.valuation),
+        date: new Date(),
+        label: providerTr.label,
+        code: providerTr.code,
+        stockmarket: providerTr.stockmarket,
+        stocksymbol: providerTr.stocksymbol,
+        assetcategory: providerTr.assetcategory
+    };
+    return tr;
+}
+
 async function pollTransactions(
     userId: number,
     startOfPoll: Date,
@@ -445,6 +502,64 @@ async function pollTransactions(
     };
 }
 
+async function pollInvestments(
+    userId: number,
+    vendorToOwnAccountIdMap: Map<string, number>,
+    access: Access,
+    config: PollTransactionsConfig
+): Promise<UserActionOrValue<Partial<Investment>[]>> {
+    const debug = await Setting.findOrCreateDefaultBooleanValue(userId, WOOB_ENABLE_DEBUG);
+
+    const autoRetryFetch = await Setting.findOrCreateDefaultBooleanValue(
+        userId,
+        PROVIDER_AUTO_RETRY
+    );
+    const numRetries = autoRetryFetch ? MAX_PROVIDER_RETRIES : 1;
+
+    const sessionManager = GLOBAL_CONTEXT.getUserSession(userId);
+
+    let providerInvestments: ProviderInvestments[];
+
+    try {
+        const providerResponse = await retryCallProvider(numRetries, async () => {
+            return await getProvider(access).fetchInvestments(
+                {
+                    access,
+                    debug,
+                    fromDate: config.fromDate,
+                    isInteractive: config.isInteractive,
+                    userActionFields: config.userActionFields,
+                },
+                sessionManager
+            );
+        });
+
+        if (providerResponse.kind === 'user_action') {
+            return providerResponse;
+        }
+
+        // Real values.
+        providerInvestments = providerResponse.values;
+    } catch (err) {
+        const { errCode } = err;
+        // Only save the status code if the error was raised in the source, using a KError.
+        if (errCode) {
+            await Access.update(userId, access.id, { fetchStatus: errCode });
+        }
+        throw err;
+    }
+
+    log.info('Normalizing source information...');
+    const investments: Partial<Investment>[] = providerInvestments
+        .map(tr => normalizeInvestment(vendorToOwnAccountIdMap, tr))
+        .filter(tr => tr !== null) as any;
+
+    log.info(`${investments.length} investments retrieved from source.`);
+    return {
+        kind: 'value',
+        value: investments,
+    };
+}
 class AccountManager {
     q: AsyncQueue = new AsyncQueue();
 
@@ -577,6 +692,130 @@ merging as per request`);
 
         return { kind: 'value', value: accountInfoMap };
     }
+
+    async syncInvestments(
+        userId: number,
+        access: Access,
+        pAccountInfoMap: AccountInfoMap | null,
+        ignoreLastFetchDate: boolean,
+        isInteractive: boolean,
+        userActionFields: Record<string, string> | null
+    ): Promise<UserActionOrValue<AccountsAndInvestments>> {
+        if (!access.hasPassword()) {
+            log.warn("Skipping investments fetching -- password isn't present");
+            const errcode = getErrorCode('NO_PASSWORD');
+            throw new KError("Access' password is not set", 500, errcode);
+        }
+
+        const startOfPoll = new Date();
+
+        const allAccounts = await Account.byAccess(userId, access);
+
+        const accountInfoMap: AccountInfoMap = pAccountInfoMap ?? new Map();
+        const { fromDate, vendorToOwnAccountIdMap } = await preparePollTransactions(
+            userId,
+            allAccounts,
+            ignoreLastFetchDate,
+            accountInfoMap
+        );
+
+        const result = await pollInvestments(
+            userId,
+            vendorToOwnAccountIdMap,
+            access,
+            { fromDate, isInteractive, userActionFields }
+        );
+        if (result.kind === 'user_action') {
+            return result;
+        }
+        let investments = result.value;
+
+        let toCreate: Partial<Investment>[] = [];
+        const filteredInvestments = [];
+        for (const investment of investments) {
+            if (!investment.accountId) {
+                continue;
+            }
+            const account = await Account.find(userId, investment.accountId);
+            if (!account) {
+                continue;
+            }
+            filteredInvestments.push(investment);
+            toCreate.push(investment)
+        }
+
+        log.info(
+            `Remaining transactions after comparison to grace period : ${filteredInvestments.length}`
+        );
+
+
+
+        // Create the new transactions.
+        const createdInvestments: Investment[] = [];
+        if (toCreate.length) {
+            log.info(`${toCreate.length} new investments found!`);
+            log.info('Creating new transactions…');
+            for (const investmentToCreate of toCreate) {
+                const created = await Investment.create(userId, investmentToCreate);
+                createdInvestments.push(created);
+            }
+            log.info('Done.');
+        }
+
+
+
+        let balanceFixups: null | { accountId: number; balance: number }[] = null;
+        if (pAccountInfoMap === null) {
+            // When pAccountInfoMap is null, we're only polling
+            // transactions; otherwise we've polled the accounts too and
+            // could perform a better balance merge.
+            log.info('Adjusting account balances...');
+            balanceFixups = await this.getActualAccountBalances(
+                userId,
+                access,
+                allAccounts.slice(),
+                userActionFields
+            );
+        }
+
+        const accounts: Account[] = [];
+        for (const { account, balanceOffset } of accountInfoMap.values()) {
+            const accountUpdate: {
+                lastCheckDate: Date;
+                initialBalance?: number;
+                balance?: number;
+            } = {
+                lastCheckDate: startOfPoll,
+            };
+
+            if (balanceOffset !== 0) {
+                log.info(`Account ${account.label} initial balance is going
+to be resynced, by an offset of ${balanceOffset}.`);
+                accountUpdate.initialBalance = account.initialBalance - balanceOffset;
+            }
+
+            if (balanceFixups !== null) {
+                const found = balanceFixups.find(entry => entry.accountId === account.id);
+                if (found) {
+                    accountUpdate.balance = found.balance;
+                }
+            }
+
+            const updated = await Account.update(userId, account.id, accountUpdate);
+            accounts.push(updated);
+        }
+
+        log.info('Checking alerts based on accounts balances...');
+        await alertManager.checkAlertsForAccounts(userId, access);
+
+
+        await Access.update(userId, access.id, { fetchStatus: FETCH_STATUS_SUCCESS });
+        log.info('Post process: done.');
+
+        return { kind: 'value', value: { accounts, createdInvestments } };
+    }
+
+
 
     async syncTransactions(
         userId: number,

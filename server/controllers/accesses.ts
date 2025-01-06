@@ -292,11 +292,92 @@ export async function fetchAccountsAndTransactions(
     }
 }
 
+
+export async function fetchAccountsAndInvestments(
+    req: PreloadedRequest<Access>,
+    res: express.Response,
+    // On transactions fetch, the accounts balance should be updated too, but we should not throw an error if it happens,
+    // nor should we create new accounts, nor should we ignore the last fetch date.
+    focusOnInvestmentsFetch = false
+) {
+    try {
+        const { id: userId } = req.user;
+        const access = req.preloaded.access;
+        const bankVendor = bankVendorByUuid(access.vendorId);
+
+        if (!access.isEnabled() || bankVendor.deprecated) {
+            const errcode = getErrorCode('DISABLED_ACCESS');
+            throw new KError('disabled access', 403, errcode);
+        }
+
+        const userActionFields = extractUserActionFields(req.body);
+
+        let accountResponse: Awaited<ReturnType<typeof accountManager.syncAccounts>> | null = null;
+
+        // To deal with banks that often throw errors when dealing with recurrent requests,
+        // we wrap the accounts update requests in a try/catch, and still fetch the transactions
+        // if it fails, if addnewsAccounts is true: we likely are in a poll and the updated accounts
+        // are really important: we should throw an error. Else, in a transactions fetch,
+        // the balance might be out of sync with the new transactions but we consider it
+        // a minor issue.
+        try {
+            accountResponse = await accountManager.syncAccounts(userId, access, {
+                addNewAccounts: focusOnInvestmentsFetch === false,
+                updateProvider: false, // TODO shouldn't this be inferred from the settings?
+                isInteractive: true,
+                userActionFields,
+            });
+        } catch (err) {
+            if (!focusOnInvestmentsFetch) {
+                throw err;
+            }
+        }
+
+        if (accountResponse && accountResponse.kind === 'user_action') {
+            res.status(200).json(accountResponse);
+            return;
+        }
+
+        const accountInfoMap = accountResponse ? accountResponse.value : null;
+
+        const transactionResponse = await accountManager.syncInvestments(
+            userId,
+            access,
+            accountInfoMap,
+            /* ignoreLastFetchDate */ !focusOnInvestmentsFetch,
+            /* isInteractive */ true,
+            userActionFields
+        );
+
+        assert(
+            transactionResponse.kind !== 'user_action',
+            'user action should have been requested when fetching accounts'
+        );
+        const { accounts, createdInvestments: createdInvestments } = transactionResponse.value;
+
+        res.status(200).json({
+            accounts,
+            createdInvestments,
+        });
+    } catch (err) {
+        asyncErr(res, err, 'when fetching accounts and transactions');
+    }
+}
+
+
+
+
+
 // Fetch accounts (for up-to-date balances) transactions using the backend and return the transactions to the client.
 // Does not add new found accounts.
 export async function fetchTransactions(req: PreloadedRequest<Access>, res: express.Response) {
     return fetchAccountsAndTransactions(req, res, true);
 }
+
+export async function fetchInvestments(req: PreloadedRequest<Access>, res: express.Response) {
+    return fetchAccountsAndInvestments(req, res, true);
+}
+
 
 // Fetch all the transactions / accounts for all the accesses, as is done during
 // any regular poll.

@@ -687,6 +687,56 @@ class Connector:
 
         return results
 
+    def get_investments(self):
+        results = []
+        with self.backend:
+            for account in list(self.backend.iter_accounts()):
+                # Get all investments for this account.
+                nyi_methods = []
+                investments = []
+
+                try:
+                    for hist_tr in self.backend.iter_investment(account):
+                        investments.append(hist_tr)
+
+                except NotImplementedError:
+                    nyi_methods.append("iter_history")
+
+
+                for method_name in nyi_methods:
+                    logging.error(
+                        ("%s not implemented for this account: %s."),
+                        method_name,
+                        account.id,
+                    )
+
+                # Build a transaction dict for each transaction.
+                for t in investments:
+                    label = None
+                    if not empty(t.label):
+                        label = unicode(t.label)
+
+                    results.append(
+                        {
+                            "account": account.id,
+                            "quantity":  t.quantity,
+                            "label": label,
+                            "unitprice"  : t.unitprice ,
+                            "unitvalue"  :t.unitvalue,
+                            "valuation"  :t.valuation,
+                            "diff"  : t.diff,
+                            "diff_ratio"  : t.diff_ratio,
+                            "externalId" : t.id,
+                            "code": t.code,
+                            "stocksymbol": t.stock_symbol,
+                            "stockmarket": t.stock_market,
+                            "assetcategory": t.asset_category
+                        }
+                    )
+
+        return results
+
+
     def fetch(self, which, from_date=None):
         """
         Wrapper to fetch data from the Woob connector.
@@ -711,6 +761,8 @@ class Connector:
                 results["values"] = self.get_accounts()
             elif which == "transactions":
                 results["values"] = self.get_transactions(from_date)
+            elif which == "investment":
+                results["values"] = self.get_investments()
             else:
                 raise Exception("Invalid fetch command.")
 
@@ -779,7 +831,7 @@ def main():
 
     parser.add_argument(
         "command",
-        choices=["test", "version", "transactions", "accounts"],
+        choices=["test", "version", "transactions", "accounts", "investment"],
         help="The command to be executed by the script",
     )
     parser.add_argument("--module", help="The Woob module name.")
@@ -895,7 +947,7 @@ def main():
         print(json.dumps({}))
         sys.exit()
 
-    if command in ["accounts", "transactions"]:
+    if command in ["accounts", "transactions", "investment"]:
         if not options.module:
             fail_unset_field("Module")
 
