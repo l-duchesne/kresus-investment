@@ -1,30 +1,3 @@
-FROM node:18 AS base
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install
-
-COPY . .
-
-# for lint
-
-FROM base as linter
-
-WORKDIR /usr/src/app
-
-RUN npm run lint
-
-# for build
-
-FROM linter as builder
-
-WORKDIR /usr/src/app
-
-RUN npm run build
-
-
 FROM node:18
 
 # Install Woob OS-level dependencies.
@@ -35,8 +8,8 @@ RUN apt-get update \
     libfreetype6-dev libwebp-dev build-essential gcc g++ wget unzip mupdf-tools \
     && rm -rf /var/lib/apt/lists/;
 
-COPY ./config.example.ini /opt/config.ini
-COPY ./entrypoint.sh /entrypoint.sh
+COPY ./support/docker/config.example.ini /opt/config.ini
+COPY ./support/docker/entrypoint.sh /entrypoint.sh
 
 # Mundane tasks, all in one to reduce the number of layers:
 # - Make sure the UTF-8 locale exists and is used by default.
@@ -61,17 +34,16 @@ RUN pip install --break-system-packages --upgrade setuptools && \
     pip install --break-system-packages "selenium<4.1.4" && \
     pip install --break-system-packages simplejson BeautifulSoup4 PyExecJS typing-extensions pdfminer.six Pillow pycountry Crypto jwt xlrd chompjs;
 
+
 WORKDIR /home/user/app
 
-COPY package*.json ./
+COPY . /home/user/app
 
-RUN yarn && \
+RUN ls && yarn && \
     yarn build:prod && \
     rm -rf node_modules && \
     yarn add sqlite3 && \
     yarn --production;
-
-COPY --from=builder /usr/src/app/dist ./
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
