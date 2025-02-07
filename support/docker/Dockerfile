@@ -39,7 +39,7 @@ WORKDIR /home/user/app
 
 COPY . /home/user/app
 
-RUN chmod a+x /home/user/app &&\
+RUN chmod -R a+x /home/user/app &&\
     yarn && \
     yarn build:prod && \
     rm -rf node_modules && \
