@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 import plainText from 'vite-plugin-plain-text';
 import sprites from 'rollup-plugin-sprite';
-import reactRefresh from 'vite-plugin-react-refresh'
+import react from '@vitejs/plugin-react'
 
 // NOTE: Known workarounds:
 // - install the `indexof` package, to work around a similar issue to what's
@@ -29,7 +29,7 @@ export default defineConfig({
 
     plugins: [
         // React hot-module reload.
-        reactRefresh(),
+        react(),
 
         // Interpret the LICENSE file as plain text that must be included.
         plainText(/LICENSE/),

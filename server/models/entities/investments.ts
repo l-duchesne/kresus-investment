@@ -192,6 +192,13 @@ export default class Investment {
         return await Investment.repo().findBy({ userId, accountId: In(accountIds) });
     }
 
+
+
+    static async byType(userId: number, type: string): Promise<Investment[]> {
+        return await Investment.repo().findBy({ userId, type: type });
+    }
+
+
     static async byBankSortedByDateBetweenDates(
         userId: number,
         account: Account,

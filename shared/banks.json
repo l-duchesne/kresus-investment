@@ -1314,5 +1314,23 @@
         "deprecated": true,
         "name": "Bolden",
         "uuid": "bolden"
+    },
+    {
+        "backend": "woob",
+        "deprecated": false,
+        "name": "Assurance vie .com",
+        "uuid": "assuranceviecom"
+    },
+    {
+        "backend": "bitpanda",
+        "deprecated": false,
+        "name": "Bitpanda",
+        "uuid": "bitpanda"
+    },
+    {
+        "backend": "woob",
+        "deprecated": false,
+        "name": "Linxea",
+        "uuid": "linxea"
     }
 ]

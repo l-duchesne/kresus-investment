@@ -78,5 +78,9 @@
     {
         "woob_id": 19,
         "name": "account-type.revolving_credit"
+    },
+    {
+        "woob_id": 100,
+        "name": "account-type.crypto"
     }
 ]

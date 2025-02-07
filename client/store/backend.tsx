@@ -447,3 +447,9 @@ export function deleteRecurringTransaction(
 export function batch(batchRequest: BatchRequest): Promise<BatchResponse> {
     return new Request('api/batch/').post().json(batchRequest).run();
 }
+
+
+//  /api/all/investments
+export function getInvestment() {
+    return new Request('api/all/investments').options({ cache: 'no-cache' }).run();
+}

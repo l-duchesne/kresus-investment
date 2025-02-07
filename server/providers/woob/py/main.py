@@ -331,7 +331,7 @@ class Connector:
         """
         return Woob.VERSION
 
-    def __init__(self, woob_data_path, fakemodules_path, sources_list_content, is_prod):
+    def __init__(self, woob_data_path, fakemodules_path, sources_list_content, is_prod,custommodules_path):
         """
         Create a Woob instance.
 
@@ -345,7 +345,8 @@ class Connector:
         # By default, consider we don't need to update the repositories.
         self.needs_update = False
 
-        self.fakemodules_path = fakemodules_path
+        self.fakemodules_path = fakemodules_path   
+        self.custommodules_path = custommodules_path  
         self.sources_list_content = sources_list_content
 
         if not os.path.isdir(woob_data_path):
@@ -366,6 +367,8 @@ class Connector:
         if not is_prod:
             self.copy_fakemodules()
 
+        self.copy_custommodules()
+        
         # Update the woob repos only if new repos are included.
         if self.needs_update:
             self.update()
@@ -388,6 +391,25 @@ class Connector:
             shutil.rmtree(self.fakemodules_path)
         shutil.copytree(fakemodules_src, self.fakemodules_path)
 
+    def copy_custommodules(self):
+        """
+        Copies the custom modules files into the default custommodules user-data
+        directory.
+
+        When Woob updates modules, it might want to write within the
+        custommodules directory, which might not be writable by the current user.
+        To prevent this, first copy the custommodules directory in a directory we
+        have write access to, and then use that directory in the sources list
+        file.
+        """
+        custommodules_src = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "custommodules"
+        )
+        if os.path.isdir(self.custommodules_path):
+            shutil.rmtree(self.custommodules_path)
+        shutil.copytree(custommodules_src, self.custommodules_path)
+
+
     def write_woob_sources_list(self):
         """
         Ensure the Woob sources.list file contains the required entries from
@@ -404,6 +426,7 @@ class Connector:
             new_sources_list_content = [
                 unicode("https://updates.woob.tech/%(version)s/main/"),
                 unicode("file://%s" % self.fakemodules_path),
+                unicode("file://%s" % self.custommodules_path),
             ]
 
         # Read the content of existing sources.list, if it exists.
@@ -902,6 +925,7 @@ def main():
             fakemodules_path=os.path.join(kresus_dir, "fakemodules"),
             sources_list_content=sources_list_content,
             is_prod=is_prod,
+            custommodules_path=os.path.join(kresus_dir, "custommodules")
         )
     except ConnectionError as exc:
         fail(

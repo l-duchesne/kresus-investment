@@ -94,7 +94,7 @@ export function registerStartupTask(userId: UserId, f: StartupTask) {
 }
 
 // Run startup tasks for the user, if any.
-async function runStartupTasks(userId: number) {
+export async function runStartupTasks(userId: number) {
     if (STARTUP_TASKS[userId]) {
         while (STARTUP_TASKS[userId].length) {
             const task = unwrap(STARTUP_TASKS[userId].pop());

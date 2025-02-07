@@ -4,6 +4,7 @@ import { TableForeignKeyOptions } from 'typeorm/schema-builder/options/TableFore
 
 import { UNKNOWN_TRANSACTION_TYPE, makeLogger } from '../helpers';
 import { Transaction } from './';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 const log = makeLogger('models/helpers');
 
@@ -121,7 +122,7 @@ const NUM_ENTITIES_IN_BATCH = 1000;
 // Note: doesn't return the inserted entities.
 export async function bulkInsert<T extends ObjectLiteral>(
     repository: Repository<T>,
-    entities: DeepPartial<T>[]
+    entities: QueryDeepPartialEntity<T>[]
 ): Promise<void> {
     // Do not call `repository.insert` without actual entities, that will generate an empty insert
     // query and throw an error.

@@ -270,6 +270,8 @@ async function preparePollTransactions(
     let oldestLastFetchDate: Date | null = null;
     const vendorToOwnAccountIdMap: Map<string, number> = new Map();
     for (const account of accounts) {
+        log.error(account.vendorAccountId)
+        log.error(account.id)
         vendorToOwnAccountIdMap.set(account.vendorAccountId, account.id);
 
         if (accountInfoMap.has(account.id)) {
@@ -415,11 +417,25 @@ function normalizeInvestment(
     let type = 'unknown'
 
     if (providerTr.code == 'XX-liquidity') {
-        type = 'money'
+        type = 'CURRENCY'
     }
 
     if (providerTr.label.indexOf('ETF') > 0) {
-        type = 'actions'
+        type = 'STOCK_MARKET'
+    }
+
+    if (providerTr.code?.startsWith('FG')) {
+        type = 'SAVINGS'
+    }
+
+    if (providerTr.code?.startsWith('SCPI')) {
+        type = 'REAL_ESTATE'
+    }
+    if (providerTr.assetcategory === 'crypto') {
+        type = 'CRYPTO'
+    }
+    if (type == 'unknown') {
+        type = 'SAVINGS'
     }
 
     const tr: Partial<Investment> = {
@@ -842,6 +858,7 @@ to be resynced, by an offset of ${balanceOffset}.`);
             ignoreLastFetchDate,
             accountInfoMap
         );
+
 
         const result = await pollTransactions(
             userId,
