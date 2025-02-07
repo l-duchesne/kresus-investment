@@ -39,7 +39,8 @@ WORKDIR /home/user/app
 
 COPY . /home/user/app
 
-RUN ls && yarn && \
+RUN chmod a+x /home/user/app &&\
+    yarn && \
     yarn build:prod && \
     rm -rf node_modules && \
     yarn add sqlite3 && \
