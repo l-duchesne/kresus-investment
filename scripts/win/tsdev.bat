@@ -1,0 +1,1 @@
+yarn tsc-watch --onSuccess "./bin/kresus.js --config config.ini"
