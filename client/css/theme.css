@@ -28,7 +28,7 @@ header h1 a:focus {
 }
 
 .content {
-    background: #FFFFFF;
+    background: #1E1E1E;
 }
 
 main nav {
@@ -105,11 +105,11 @@ body.dark table caption {
     background-color: #444444;
 }
 
-body.dark table:not(.no-hover) > tbody > tr:hover {
+body.dark table:not(.no-hover)>tbody>tr:hover {
     background-color: #4A4949;
 }
 
-body.dark table.striped > tbody > tr:nth-of-type(2n+1) {
+body.dark table.striped>tbody>tr:nth-of-type(2n+1) {
     background-color: #3C3C3C;
 }
 

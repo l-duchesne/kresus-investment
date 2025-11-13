@@ -429,7 +429,7 @@ function normalizeInvestment(
     }
 
     if (providerTr.code?.startsWith('SCPI')) {
-        type = 'REAL_ESTATE'
+        type = 'REAL_ESTATE_ACTIVE'
     }
     if (providerTr.assetcategory === 'crypto') {
         type = 'CRYPTO'

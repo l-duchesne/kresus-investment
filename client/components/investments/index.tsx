@@ -1,144 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Fragment } from "react";
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid2";
-import { styled, useTheme } from "@mui/material/styles";
-import ReactEcharts from "echarts-for-react";
-
-import './investments.css';
-import { Box, Icon, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from '@mui/material';
-import { ArrowRightAlt } from '@mui/icons-material';
+import React, { useState, useEffect, useCallback } from "react";
+import PerformanceCard from "./PerformanceCard";
+import LineChart from "./linechart";
+import DoughnutChart from "./DoughnutChart";
+import AssetsTable from "./AssetsTable";
 import { useGenericError } from '../../hooks';
 import { getInvestment } from '../../store/backend';
 import { SumaryInvestements } from '../../models';
 
+const Dashboard = () => {
+    const [summaryInvestment, setSummaryInvestment] = useState<SumaryInvestements | null>(null);
 
-const ContentBox = styled("div")(({ theme }) => ({
-    margin: "2rem",
-    [theme.breakpoints.down("sm")]: { margin: "1rem" }
-}));
-
-
-const Title = styled("span")(() => ({
-    fontSize: "1rem",
-    fontWeight: "500",
-    marginRight: ".5rem",
-    textTransform: "capitalize"
-}));
-
-const SubTitle = styled("span")(({ theme }) => ({
-    fontSize: "0.875rem",
-    color: theme.palette.text.secondary
-}));
-
-const H4 = styled("h4")(({ theme }) => ({
-    fontSize: "1rem",
-    fontWeight: "500",
-    marginBottom: "1rem",
-    textTransform: "capitalize",
-    color: theme.palette.text.secondary
-}));
-
-const StyledCard = styled(Card)(({ theme }) => ({
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "24px !important",
-    background: theme.palette.background.paper,
-    [theme.breakpoints.down("sm")]: { padding: "16px !important" }
-}));
-
-
-
-const Heading = styled("h6")(({ theme }) => ({
-    margin: 0,
-    marginTop: "4px",
-    fontSize: "14px",
-    fontWeight: "500",
-    color: theme.palette.primary.main
-}));
-
-
-
-const DoughnutChart = ({ height = "", color = [""] }) => {
-    const theme = useTheme();
-
-    const option = {
-        legend: {
-            bottom: 0,
-            show: true,
-            itemGap: 20,
-            icon: "circle",
-            textStyle: { color: theme.palette.text.secondary, fontSize: 13, fontFamily: "roboto" }
-        },
-        tooltip: { show: false, trigger: "item", formatter: "{a} <br/>{b}: {c} ({d}%)" },
-        xAxis: [{ axisLine: { show: false }, splitLine: { show: false } }],
-        yAxis: [{ axisLine: { show: false }, splitLine: { show: false } }],
-
-        series: [
-            {
-                name: "Traffic Rate",
-                type: "pie",
-                hoverOffset: 5,
-                radius: ["45%", "72.55%"],
-                center: ["50%", "50%"],
-                avoidLabelOverlap: false,
-                stillShowZeroSum: false,
-                labelLine: { show: false },
-                label: {
-                    show: false,
-                    fontSize: 13,
-                    formatter: "{a}",
-                    position: "center",
-                    fontFamily: "roboto",
-                    color: theme.palette.text.secondary
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: "14",
-                        padding: 4,
-                        fontWeight: "normal",
-                        // formatter: "{b} \n{c} ({d}%)"
-                        formatter: "{b} ({d}%)"
-                    },
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: "rgba(0, 0, 0, 0.5)"
-                    }
-                },
-                data: [
-                    { value: 65, name: "Google" },
-                    { value: 20, name: "Facebook" },
-                    { value: 15, name: "Others" }
-                ]
-            }
-        ]
-    };
-
-    return <ReactEcharts style={{ height }} option={{ ...option, color: [...color] }} />;
-}
-
-const ProductTable = styled(Table)(() => ({
-    minWidth: 400,
-    whiteSpace: "pre",
-    "& small": {
-        width: 50,
-        height: 15,
-        borderRadius: 500,
-        boxShadow: "0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)"
-    },
-    "& td": { borderBottom: "none" },
-    "& td:first-of-type": { paddingLeft: "16px !important" }
-}));
-
-const Investments = () => {
-    const { palette } = useTheme();
-
-
-    const [summaryInvestment, setSummaryInvestment] = useState<SumaryInvestements>();
     const fetch = useGenericError(
         useCallback(async () => {
             const results = (await getInvestment()) as SumaryInvestements;
@@ -146,99 +17,70 @@ const Investments = () => {
         }, [])
     );
 
-
-    // On mount, fetch the recurring transactions.
     useEffect(() => {
-        void fetch();
+        fetch();
     }, [fetch]);
 
+    const transformTitle = (str: string): string => {
+        if (str === 'savings') return 'Épargne';
+        if (str === 'crypto') return 'Crypto';
+        if (str === 'stock_market') return 'Actions';
+        if (str === 'real_estate_active') return 'Immobilier actif';
+        if (str === 'real_estate_passive') return 'Immobilier passif';
+        if (str === 'currency') return 'Liquidités';
+        // Implement your string transformation logic here
+        return str.toUpperCase(); // Example transformation
+    };
+
+    if (!summaryInvestment) {
+        return <div>Loading...</div>;
+    }
+
+    const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
+
+
     return (
-        <Fragment>
-            <ContentBox className="analytics">
-                <Grid container spacing={3}>
-                    <Grid size={{ md: 8, xs: 12 }}>
-                        <Grid container spacing={3} sx={{ mb: "24px" }}>
-                            <Grid size={{ md: 6, xs: 12 }} >
-                                <StyledCard elevation={6}>
-                                    <ContentBox>
-                                        <Icon className="icon" />
+        <div className="content-investment min-h-screen text-white p-6 space-y-6">
+            {/* HEADER */}
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-semibold">Patrimoine brut</h1>
+                <div className="bg-[#1E1E1E] px-4 py-2 rounded-lg flex items-center space-x-2 cursor-pointer">
+                    <span className="text-sm text-gray-400">Toutes les catégories</span>
+                </div>
+            </div>
 
-                                        <Box ml="12px">
-                                            <h1>Total Net: </h1>
-                                            <Heading>{summaryInvestment?.netSum}</Heading>
-                                        </Box>
-                                    </ContentBox>
-                                </StyledCard>
-                                <StyledCard elevation={3}>
-                                    <ContentBox>
-                                        <Icon className="icon" />
+            {/* GRAPHIQUE + PERFORMANCE */}
+            <div className="grid grid-cols-3 gap-6">
+                <div className="col-span-2 bg-[#1E1E1E] p-4 rounded-lg">
+                    <LineChart />
+                </div>
+                <PerformanceCard value={-1779} percentage={-1.04} />
+            </div>
 
-                                        <Box ml="12px">
-                                            <h1>Total Gross: </h1>
-                                            <Heading>{summaryInvestment?.grossSum}</Heading>
-                                        </Box>
-                                    </ContentBox>
-                                </StyledCard>
-                            </Grid>
-                        </Grid>
-                        <H4>Ongoing Projects</H4>
-                    </Grid>
-
-                    <Grid size={{ md: 4, xs: 12 }}>
-                        <Card sx={{ px: 3, py: 2, mb: 3 }}>
-                            <Title>Traffic Sources</Title>
-                            <SubTitle>Last 30 days</SubTitle>
-                            <DoughnutChart
-                                height="300px"
-                                color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
-                            />
-                        </Card>
-
-                    </Grid>
-
-                    <Grid>
-                        <ProductTable>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell colSpan={4} sx={{ px: 3 }}>
-                                        Type
-                                    </TableCell>
-
-                                    <TableCell colSpan={2} sx={{ px: 0 }}>
-                                        Amount
-                                    </TableCell>
-                                    <TableCell colSpan={2} sx={{ px: 0 }}>
-                                        Percentage
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-
-                            <TableBody>
-                                {summaryInvestment?.details.map((investment, index) => (
-                                    <TableRow key={index} hover>
-                                        <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: "capitalize" }}>
-                                            {investment.type}
-                                        </TableCell>
-
-                                        <TableCell align="left" colSpan={2} sx={{ px: 0, textTransform: "capitalize" }}>
-                                            {investment.value > 999 ? (investment.value / 1000).toFixed(1) + "k" : investment.value.toFixed(2)} €
-                                        </TableCell>
-
-                                        <TableCell align="left" colSpan={2} sx={{ px: 0, textTransform: "capitalize" }}>
-                                            {investment.percentage ? investment.percentage : 0} %
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </ProductTable>
-
-                    </Grid>
-                </Grid>
-            </ContentBox>
-        </Fragment>
+            {/* LISTE DES ACTIFS + CHART DOUGHNUT */}
+            <div className="grid grid-cols-3 gap-6">
+                <div className="col-span-2 bg-[#1E1E1E] p-4 rounded-lg">
+                    <AssetsTable datas={summaryInvestment.details.map((elt, index) => {
+                        return {
+                            value: elt.value,
+                            name: transformTitle(elt.type),
+                            percentage: elt.percentage.toFixed(2),
+                            type: elt.type,
+                            color: colors[index % colors.length]
+                        }
+                    })} />
+                </div>
+                <div className="bg-[#1E1E1E] p-4 rounded-lg">
+                    <DoughnutChart
+                        data={summaryInvestment.details.map((elt, index) => {
+                            return { value: elt.value.toFixed(2), percentage: elt.percentage.toFixed(2), name: transformTitle(elt.type), color: colors[index % colors.length] }
+                        })} total={summaryInvestment.netSum}
+                        height="300px"
+                    />
+                </div>
+            </div>
+        </div>
     );
 };
 
-Investments.displayName = 'Investments';
-
-export default Investments;
+export default Dashboard;

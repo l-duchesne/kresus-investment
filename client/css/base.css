@@ -8,6 +8,8 @@
  * declare the structure and global rules (ex: body, html, *) in a dedicated
  * file and import it first.
  */
+
+
 @import url('./structure.css');
 
 @import url('./sprite.css');
@@ -32,3 +34,8 @@
 @import url('./forms.css');
 
 @import url('./theme.css');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

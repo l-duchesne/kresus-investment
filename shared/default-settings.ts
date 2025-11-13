@@ -46,7 +46,7 @@ DefaultSettings.set(LOCALE, 'en');
 DefaultSettings.set(LIMIT_ONGOING_TO_CURRENT_MONTH, 'false');
 DefaultSettings.set(FLUID_LAYOUT, 'false');
 DefaultSettings.set(WOOB_AUTO_MERGE_ACCOUNTS, 'true');
-DefaultSettings.set(WOOB_AUTO_UPDATE, 'true');
+DefaultSettings.set(WOOB_AUTO_UPDATE, 'false');
 DefaultSettings.set(WOOB_ENABLE_DEBUG, 'false');
 DefaultSettings.set(WOOB_FETCH_THRESHOLD, '1');
 DefaultSettings.set(PROVIDER_AUTO_RETRY, 'false');

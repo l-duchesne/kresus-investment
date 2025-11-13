@@ -18,7 +18,7 @@ export enum WeathTypeDtoSchema {
     REAL_ESTATE_ACTIVE = "real_estate_active",
     REAL_ESTATE_PASSIVE = "real_estate_passive",
     SAVINGS = "savings",
-    CRYPTO_CURRENCY = "crypto_currency",
+    CRYPTO_CURRENCY = "crypto",
     CURRENCY = "currency"
 }
 
@@ -78,19 +78,29 @@ async function getAllData(userId: number): Promise<AllInvestment> {
         details: []
     }
     const investments = await Investment.all(userId);
+
     const groupedAndFilled = await groupAndFillInvestments(investments);
+
     const groupedByDate = await groupByDate(groupedAndFilled);
+
     const list = await getGroupWithMostRecentDate(groupedByDate);
-    let sum = 0
-    for (let investment of list) {
-        sum += investment.valuation
+
+    const groupedResults = groupAndSumByType(list);
+
+    res.details = mapGroupedResults(groupedResults);
+
+    let sum = 0;
+    for (let detail of res.details) {
+        if (detail.value) {
+            sum += detail.value;
+        }
     }
 
-    res.grossSum = sum
-    res.netSum = sum
-    res.details = mapGroupedResults(groupAndSumByType(list))
+    res.grossSum = sum;
+    res.netSum = sum;
 
-    res.details.forEach(elt => elt.percentage = elt.value * sum / 100)
+    res.details.forEach(elt => elt.percentage = elt.value * 100 / sum);
+    console.log('Final Result:', res);
     return res
 }
 
@@ -101,18 +111,21 @@ async function getAllDataByType(userId: number, type: string): Promise<AllTypedI
         netSum: 0,
         details: []
     }
-    const investments = await Investment.byType(userId, type);
+    const investments = await Investment.byType(userId, type.toUpperCase());
     const groupedAndFilled = await groupAndFillInvestments(investments);
     const groupedByDate = await groupByDate(groupedAndFilled);
-    const list = await getGroupWithMostRecentDate(groupedByDate);
-    let sum = 0
-    for (let investment of list) {
-        sum += investment.valuation
-    }
+    let list = await getGroupWithMostRecentDate(groupedByDate);
 
+    res.details = removeDuplicateInvestments(list)
+    let sum = 0
+    for (let investment of res.details) {
+        if (investment.valuation) {
+            sum = sum + investment.valuation
+        }
+
+    }
     res.grossSum = sum
     res.netSum = sum
-    res.details = list
     return res
 }
 
@@ -131,6 +144,7 @@ function groupAndSumByType(investments: Investment[]): Record<WeathTypeDtoSchema
     return investments.reduce((result, investment) => {
         const { type, quantity, valuation } = investment;
         const newType = toType(type)
+
         // Initialiser le groupe s'il n'existe pas
         if (!result[newType]) {
             result[newType] = {
@@ -140,8 +154,13 @@ function groupAndSumByType(investments: Investment[]): Record<WeathTypeDtoSchema
         }
 
         // Ajouter les valeurs actuelles au groupe
-        result[newType].totalQuantity += Number(quantity);
-        result[newType].totalValuation += Number(valuation);
+        if (quantity) {
+            result[newType].totalQuantity += Number(quantity);
+        }
+
+        if (valuation) {
+            result[newType].totalValuation += Number(valuation);
+        }
 
         return result;
     }, {} as Record<string, { totalQuantity: number; totalValuation: number }>);
@@ -156,6 +175,9 @@ function toType(type: string): WeathTypeDtoSchema {
     }
     else if (type === 'STOCK_MARKET') {
         return WeathTypeDtoSchema.STOCK_MARKET
+    }
+    else if (type === 'REAL_ESTATE_ACTIVE') {
+        return WeathTypeDtoSchema.REAL_ESTATE_ACTIVE
     }
     return WeathTypeDtoSchema.CURRENCY;
 }
@@ -233,4 +255,18 @@ async function getGroupWithMostRecentDate(groupedByDate: Record<string, Investme
 
     // Retourner le groupe associé à cette date
     return groupedByDate[mostRecentDateKey] || [];
+}
+
+function removeDuplicateInvestments(investments: Investment[]): Investment[] {
+    const uniqueInvestments = new Map<string, Investment>();
+
+    for (const investment of investments) {
+        const key = `${investment.userId}-${investment.accountId}-${investment.code}`;
+        // Garder uniquement l'investissement le plus récent
+        if (!uniqueInvestments.has(key) || uniqueInvestments.get(key)!.date < investment.date) {
+            uniqueInvestments.set(key, investment);
+        }
+    }
+
+    return Array.from(uniqueInvestments.values());
 }

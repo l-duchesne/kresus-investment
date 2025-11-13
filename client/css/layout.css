@@ -79,7 +79,7 @@ header {
     z-index: 899;
 }
 
-header > * {
+header>* {
     flex-wrap: nowrap;
     flex-shrink: 0;
     align-self: center;
@@ -117,7 +117,7 @@ main {
     flex-direction: row;
 }
 
-main > * {
+main>* {
     height: 100%;
     min-height: 100%;
     overflow-y: auto;
@@ -158,7 +158,7 @@ main nav.menu-hidden {
     padding-right: 0;
 }
 
-main nav > * {
+main nav>* {
     width: 320px;
 }
 
@@ -167,12 +167,12 @@ main nav ul {
     padding: 0;
 }
 
-main nav > :first-child {
+main nav> :first-child {
     /* Same as the #content-container top padding */
     margin-top: 1em;
 }
 
-main nav > :last-child {
+main nav> :last-child {
     margin-bottom: 0;
 }
 
@@ -189,7 +189,7 @@ main nav .bank-total-accesses {
 /* Sidebar list of sections (transactions, settings, etc.) */
 
 /* Ensure the about/version number of Kresus is at the bottom. */
-main nav > :nth-last-child(2) {
+main nav> :nth-last-child(2) {
     flex: auto;
 }
 
@@ -203,7 +203,8 @@ main nav > :nth-last-child(2) {
     padding: 1em;
     margin: auto;
     min-width: 600px;
-    max-width: min(100%, 100ch);
+    max-width: calc(100% - 320px);
+    margin-left: 320px;
 }
 
 body.fluid .content {
@@ -211,16 +212,17 @@ body.fluid .content {
     max-width: 1600px;
 }
 
-.content > .loading-message {
+.content>.loading-message {
     display: block;
     text-align: center;
 }
 
-.content > h3 {
+.content>h3 {
     margin-top: 0;
 }
 
 @media (max-width: 620px) {
+
     /*
      * Put the nav menu on top of content, but below the header, be it in fluid layout or not.
      * Keep this in sync with the rule doing the same on body:not(.fluid).
@@ -234,7 +236,7 @@ body.fluid .content {
         z-index: 890;
     }
 
-    main nav > :first-child {
+    main nav> :first-child {
         /* Same as the #content top padding */
         margin-top: 7px;
     }

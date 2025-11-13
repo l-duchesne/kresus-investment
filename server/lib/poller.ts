@@ -51,7 +51,7 @@ async function managePollingErrors(userId: number, access: Access, err: KError):
 
 // Can throw.
 export async function fullPoll(userId: number) {
-    log.info('Checking accounts and transactions for all accesses...');
+    log.info('Checking accounts, investments and transactions for all accesses...');
 
     let needUpdate = await Setting.findOrCreateDefaultBooleanValue(userId, WOOB_AUTO_UPDATE);
 
@@ -104,6 +104,21 @@ export async function fullPoll(userId: number) {
                     transactionResponse.kind !== 'user_action',
                     'Unexpected action requirement after accounts have been successfully polled'
                 );
+
+
+                const investmentResponse = await accountManager.syncInvestments(
+                    userId,
+                    access,
+                    accountInfoMap,
+                    /* ignoreLastFetchDate */ false,
+                    /* isInteractive */ false,
+                    null
+                );
+                assert(
+                    investmentResponse.kind !== 'user_action',
+                    'Unexpected action requirement after accounts have been successfully polled'
+                );
+
             } else if (!access.isEnabled() || access.excludeFromPoll) {
                 log.info(
                     `Won't poll, access from bank ${vendorId} with login ${login} is disabled or shouldn't be polled.`
@@ -165,7 +180,8 @@ class Poller {
         // Only polls accounts for the current user, not for all users, until
         // proper support for multiple users has been implemented.
         try {
-            await fullPoll(process.kresus.user.id);
+            // TODO : Disable sync for now !!
+            //    await fullPoll(process.kresus.user.id);
         } catch (err) {
             log.error(`Error when doing an automatic poll: ${err.message}`);
         }

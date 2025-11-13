@@ -453,3 +453,8 @@ export function batch(batchRequest: BatchRequest): Promise<BatchResponse> {
 export function getInvestment() {
     return new Request('api/all/investments').options({ cache: 'no-cache' }).run();
 }
+
+//  /api/all/investments/real_estate_active
+export function getInvestmentByType(type: string) {
+    return new Request(`api/all/investments/${type}`).options({ cache: 'no-cache' }).run();
+}
