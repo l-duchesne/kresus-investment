@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { DataSource, DataSourceOptions, EntityTarget, EntityManager, Repository } from 'typeorm';
+import { DataSource, DataSourceOptions, EntityTarget, EntityManager, Repository, ObjectLiteral } from 'typeorm';
 
 import { assert, panic, makeLogger } from '../helpers';
 
@@ -17,6 +17,7 @@ import TransactionRuleCondition from './entities/transaction-rule-condition';
 import User from './entities/users';
 import RecurringTransaction from './entities/recurring-transactions';
 import AppliedRecurringTransaction from './entities/applied-recurring-transactions';
+import Investment from './entities/investments'
 
 export {
     Access,
@@ -33,6 +34,7 @@ export {
     User,
     RecurringTransaction,
     AppliedRecurringTransaction,
+    Investment
 };
 
 const log = makeLogger('models/index');
@@ -108,7 +110,7 @@ export async function setupOrm(): Promise<DataSource> {
     return dataSource;
 }
 
-export function getRepository<T>(x: EntityTarget<T>): Repository<T> {
+export function getRepository<T extends ObjectLiteral>(x: EntityTarget<T>): Repository<T> {
     if (dataSource === null || typeof dataSource === 'undefined') {
         panic('Expected data source to be initialized');
     }

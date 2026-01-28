@@ -60,9 +60,8 @@ const URLs = {
         ) {
             const blank = `/view/${driver.type}/${driver.value}/recurring-transactions/new`;
             if (predefined) {
-                return `${blank}/${window.encodeURIComponent(predefined.label)}/${
-                    predefined.amount
-                }/${predefined.day}/${predefined.type}`;
+                return `${blank}/${window.encodeURIComponent(predefined.label)}/${predefined.amount
+                    }/${predefined.day}/${predefined.type}`;
             }
 
             return blank;
@@ -162,6 +161,13 @@ const URLs = {
     rules: {
         pattern: '/rules',
     },
+    investments: {
+        pattern: '/investments',
+        url() {
+            return '/investments';
+        },
+    },
+
 };
 
 for (const [key, value] of Object.entries(URLs)) {

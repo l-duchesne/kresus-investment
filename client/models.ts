@@ -545,3 +545,17 @@ export function assertValidRecurringTransaction(arg: any): asserts arg is Recurr
     assertHas(arg, 'dayOfMonth');
     assertHas(arg, 'listOfMonths');
 }
+
+
+export type SumaryInvestementDetail = {
+    type: string;
+    value: number;
+    percentage: number;
+}
+
+
+export type SumaryInvestements = {
+    grossSum: number;
+    netSum: number;
+    details: SumaryInvestementDetail[];
+}

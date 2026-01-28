@@ -14,6 +14,7 @@ import {
     ProviderAccountResponse,
     Provider,
     ProviderTransaction,
+    ProviderInvestmentsResponse,
 } from './index';
 
 const log = makeLogger('providers/demo');
@@ -71,25 +72,25 @@ export const fetchAccounts = async ({
         type: number;
         balance?: string;
     }[] = [
-        {
-            vendorAccountId: main,
-            label: 'Compte chèque',
-            iban: 'FR235711131719',
-            currency: 'EUR',
-            type: accountTypeNameToId('account-type.checking'),
-        },
-        {
-            vendorAccountId: second,
-            label: 'Compte en dollars',
-            currency: 'USD',
-            type: accountTypeNameToId('account-type.savings'),
-        },
-        {
-            vendorAccountId: third,
-            label: 'Livret A',
-            type: accountTypeNameToId('account-type.savings'),
-        },
-    ];
+            {
+                vendorAccountId: main,
+                label: 'Compte chèque',
+                iban: 'FR235711131719',
+                currency: 'EUR',
+                type: accountTypeNameToId('account-type.checking'),
+            },
+            {
+                vendorAccountId: second,
+                label: 'Compte en dollars',
+                currency: 'USD',
+                type: accountTypeNameToId('account-type.savings'),
+            },
+            {
+                vendorAccountId: third,
+                label: 'Livret A',
+                type: accountTypeNameToId('account-type.savings'),
+            },
+        ];
 
     if (access.login === 'test-balance') {
         CHECKING_ACCOUNT_BALANCE += 10;
@@ -302,8 +303,14 @@ export const fetchTransactions = ({
     return Promise.resolve({ kind: 'values', values: generate(access) });
 };
 
+export const fetchInvestments = ({
+}: FetchTransactionsOptions): Promise<ProviderInvestmentsResponse> => {
+    return Promise.resolve({ kind: 'values', values: [] });
+};
+
 export const _: Provider = {
     SOURCE_NAME,
     fetchAccounts,
     fetchTransactions,
+    fetchInvestments
 };

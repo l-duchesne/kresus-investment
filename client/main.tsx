@@ -29,23 +29,24 @@ import URL from './urls';
 import { FORCE_DEMO_MODE, URL_PREFIX, WOOB_INSTALLED } from '../shared/instance';
 
 // Components
-import About from './components/about';
-import Reports from './components/reports';
-import Budget from './components/budget';
-import DuplicatesList from './components/duplicates';
-import Settings from './components/settings';
-import Accesses from './components/accesses';
-import Categories from './components/categories';
-import Transactions from './components/transactions';
-import RecurringTransactionsList from './components/recurring-transactions/account-recurring-transactions-list';
-import NewRecurringTransaction from './components/recurring-transactions/new-recurring-transaction';
-import Onboarding from './components/onboarding';
-import Dashboard from './components/dashboard';
-import TransactionRules from './components/rules';
-import Menu from './components/menu';
-import DropdownMenu from './components/menu/dropdown';
+const About = React.lazy(() => import('./components/about'));
+const Reports = React.lazy(() => import('./components/reports'));
+const Budget = React.lazy(() => import('./components/budget'));
+const DuplicatesList = React.lazy(() => import('./components/duplicates'));
+const Settings = React.lazy(() => import('./components/settings'));
+const Accesses = React.lazy(() => import('./components/accesses'));
+const Categories = React.lazy(() => import('./components/categories'));
+const Transactions = React.lazy(() => import('./components/transactions'));
+const RecurringTransactionsList = React.lazy(() => import('./components/recurring-transactions/account-recurring-transactions-list'));
+const NewRecurringTransaction = React.lazy(() => import('./components/recurring-transactions/new-recurring-transaction'));
+const Onboarding = React.lazy(() => import('./components/onboarding'));
+const Dashboard = React.lazy(() => import('./components/dashboard'));
+const TransactionRules = React.lazy(() => import('./components/rules'));
+const Menu = React.lazy(() => import('./components/menu'));
 
-import DemoButton from './components/header/demo-button';
+const DropdownMenu = React.lazy(() => import('./components/menu/dropdown'));
+const DemoButton = React.lazy(() => import('./components/header/demo-button'));
+const Investments = React.lazy(() => import('./components/investments'));
 
 import Form from './components/ui/form';
 import DisplayIf from './components/ui/display-if';
@@ -58,6 +59,7 @@ import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.css';
 import 'react-toastify/dist/ReactToastify.min.css';
 import './css/base.css';
+
 
 const RESIZE_THROTTLING = 100;
 
@@ -109,45 +111,51 @@ const View = () => {
     }, [params.driver, params.value]);
 
     return (
-        <DriverContext.Provider value={currentDriver}>
-            <Switch>
-                <Route path={URL.reports.pattern}>
-                    <RedirectIfUnknownAccount>
-                        <Reports />
-                    </RedirectIfUnknownAccount>
-                </Route>
-                <Route path={URL.budgets.pattern}>
-                    <RedirectIfNotAccount>
+        <Suspense fallback={
+            <div className="pt-3 text-center">
+                Loading ....
+            </div>
+        }>
+            <DriverContext.Provider value={currentDriver}>
+                <Switch>
+                    <Route path={URL.reports.pattern}>
                         <RedirectIfUnknownAccount>
-                            <Budget />
+                            <Reports />
                         </RedirectIfUnknownAccount>
-                    </RedirectIfNotAccount>
-                </Route>
-                <Route path={URL.charts.pattern}>
-                    <RedirectIfUnknownAccount>
-                        <Charts />
-                    </RedirectIfUnknownAccount>
-                </Route>
-                <Route path={URL.duplicates.pattern}>
-                    <RedirectIfNotAccount>
-                        <DuplicatesList />
-                    </RedirectIfNotAccount>
-                </Route>
-                <Route path={URL.transactions.pattern}>
-                    <Transactions />
-                </Route>
-                <Route path={URL.newRecurringTransaction.pattern}>
-                    <RedirectIfNotAccount>
-                        <NewRecurringTransaction />
-                    </RedirectIfNotAccount>
-                </Route>
-                <Route path={URL.recurringTransactions.pattern}>
-                    <RedirectIfNotAccount>
-                        <RecurringTransactionsList />
-                    </RedirectIfNotAccount>
-                </Route>
-            </Switch>
-        </DriverContext.Provider>
+                    </Route>
+                    <Route path={URL.budgets.pattern}>
+                        <RedirectIfNotAccount>
+                            <RedirectIfUnknownAccount>
+                                <Budget />
+                            </RedirectIfUnknownAccount>
+                        </RedirectIfNotAccount>
+                    </Route>
+                    <Route path={URL.charts.pattern}>
+                        <RedirectIfUnknownAccount>
+                            <Charts />
+                        </RedirectIfUnknownAccount>
+                    </Route>
+                    <Route path={URL.duplicates.pattern}>
+                        <RedirectIfNotAccount>
+                            <DuplicatesList />
+                        </RedirectIfNotAccount>
+                    </Route>
+                    <Route path={URL.transactions.pattern}>
+                        <Transactions />
+                    </Route>
+                    <Route path={URL.newRecurringTransaction.pattern}>
+                        <RedirectIfNotAccount>
+                            <NewRecurringTransaction />
+                        </RedirectIfNotAccount>
+                    </Route>
+                    <Route path={URL.recurringTransactions.pattern}>
+                        <RedirectIfNotAccount>
+                            <RecurringTransactionsList />
+                        </RedirectIfNotAccount>
+                    </Route>
+                </Switch>
+            </DriverContext.Provider>
+        </Suspense>
     );
 };
 
@@ -203,84 +211,97 @@ const Kresus = () => {
     });
 
     return (
-        <ErrorReporter>
-            <BrowserRouter basename={`${urlPrefix}/#`}>
-                <Switch>
-                    <Route path={[URL.woobReadme.pattern, URL.onboarding.pattern]}>
-                        <DisplayOrRedirectToInitialScreen>
-                            <Onboarding />
-                        </DisplayOrRedirectToInitialScreen>
-                    </Route>
-                    <Route path="/" exact={false}>
-                        <DisplayOrRedirectToInitialScreen>
-                            <header>
-                                <button className="menu-toggle" onClick={handleToggleMenu}>
-                                    <span className="fa fa-navicon" />
-                                </button>
-                                <h1>
-                                    <Link to={URL.dashboard.url()}>{$t('client.KRESUS')}</Link>
-                                </h1>
-                                <Route path={URL.sections.pattern}>
-                                    <SectionTitle />
-                                </Route>
 
-                                <DisplayIf condition={forcedDemoMode}>
-                                    <p className="disable-demo-mode">{$t('client.demo.forced')}</p>
-                                </DisplayIf>
-                                <DisplayIf condition={!forcedDemoMode}>
-                                    <DemoButton />
-                                </DisplayIf>
+        <Suspense fallback={
+            <div className="pt-3 text-center">
+                Loading ....
+            </div>
+        }>
+            <ErrorReporter>
+                <BrowserRouter basename={`${urlPrefix}/#`}>
+                    <Switch>
+                        <Route path={[URL.woobReadme.pattern, URL.onboarding.pattern]}>
+                            <DisplayOrRedirectToInitialScreen>
+                                <Onboarding />
+                            </DisplayOrRedirectToInitialScreen>
+                        </Route>
+                        <Route path="/" exact={false}>
+                            <DisplayOrRedirectToInitialScreen>
+                                <header>
+                                    <button className="menu-toggle" onClick={handleToggleMenu}>
+                                        <span className="fa fa-navicon" />
+                                    </button>
+                                    <h1>
+                                        <Link to={URL.dashboard.url()}>{$t('client.KRESUS')}</Link>
+                                    </h1>
+                                    <h1>
+                                        <Link to={URL.investments.url()}>Investments</Link>
+                                    </h1>
+                                    <Route path={URL.sections.pattern}>
+                                        <SectionTitle />
+                                    </Route>
 
-                                <DropdownMenu />
-                            </header>
+                                    <DisplayIf condition={forcedDemoMode}>
+                                        <p className="disable-demo-mode">{$t('client.demo.forced')}</p>
+                                    </DisplayIf>
+                                    <DisplayIf condition={!forcedDemoMode}>
+                                        <DemoButton />
+                                    </DisplayIf>
 
-                            <main>
-                                <Route path={URL.sections.genericPattern}>
-                                    <Menu />
-                                </Route>
-                                <div id="content-container">
-                                    <div className="content" onClick={handleContentClick}>
-                                        <Switch>
-                                            <Route path={URL.view.pattern}>
-                                                <View />
-                                            </Route>
-                                            <Route path={URL.settings.pattern}>
-                                                <Settings />
-                                            </Route>
-                                            <Route path={URL.categories.pattern}>
-                                                <Categories />
-                                            </Route>
-                                            <Route path={URL.about.pattern}>
-                                                <About />
-                                            </Route>
-                                            <Route path={URL.accesses.pattern}>
-                                                <Accesses />
-                                            </Route>
-                                            <Route path={URL.dashboard.pattern}>
-                                                <Dashboard />
-                                            </Route>
-                                            <Route path={URL.rules.pattern}>
-                                                <TransactionRules />
-                                            </Route>
-                                            <Redirect
-                                                to={URL.reports.url(
-                                                    new DriverAccount(initialAccountId)
-                                                )}
-                                                push={false}
-                                            />
-                                        </Switch>
+                                    <DropdownMenu />
+                                </header>
+
+                                <main>
+                                    <Route path={URL.sections.genericPattern}>
+                                        <Menu />
+                                    </Route>
+                                    <div id="content-container">
+                                        <div className="content" onClick={handleContentClick}>
+                                            <Switch>
+                                                <Route path={URL.view.pattern}>
+                                                    <View />
+                                                </Route>
+                                                <Route path={URL.settings.pattern}>
+                                                    <Settings />
+                                                </Route>
+                                                <Route path={URL.categories.pattern}>
+                                                    <Categories />
+                                                </Route>
+                                                <Route path={URL.about.pattern}>
+                                                    <About />
+                                                </Route>
+                                                <Route path={URL.accesses.pattern}>
+                                                    <Accesses />
+                                                </Route>
+                                                <Route path={URL.dashboard.pattern}>
+                                                    <Dashboard />
+                                                </Route>
+                                                <Route path={URL.investments.pattern}>
+                                                    <Investments />
+                                                </Route>
+                                                <Route path={URL.rules.pattern}>
+                                                    <TransactionRules />
+                                                </Route>
+                                                <Redirect
+                                                    to={URL.reports.url(
+                                                        new DriverAccount(initialAccountId)
+                                                    )}
+                                                    push={false}
+                                                />
+                                            </Switch>
+                                        </div>
                                     </div>
-                                </div>
-                            </main>
-                        </DisplayOrRedirectToInitialScreen>
-                    </Route>
-                    <Redirect from="" to="/" push={false} />
-                </Switch>
+                                </main>
+                            </DisplayOrRedirectToInitialScreen>
+                        </Route>
+                        <Redirect from="" to="/" push={false} />
+                    </Switch>
 
-                <ToastContainer />
-                <Overlay />
-            </BrowserRouter>
-        </ErrorReporter>
+                    <ToastContainer />
+                    <Overlay />
+                </BrowserRouter>
+            </ErrorReporter>
+        </Suspense>
     );
 };
 

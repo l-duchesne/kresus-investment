@@ -24,6 +24,29 @@ export interface ProviderTransactionResponse {
     values: ProviderTransaction[];
 }
 
+export interface ProviderInvestments {
+    account: string;
+    externalId: string;
+    label: string;
+    quantity: string;
+    unitprice: string;
+    unitvalue: string;
+    valuation: string;
+    diff?: string;
+    diff_ratio?: string;
+    code?: string;
+    stocksymbol?: string;
+    stockmarket?: string;
+    assetcategory?: string;
+}
+
+
+export interface ProviderInvestmentsResponse {
+    kind: 'values';
+    values: ProviderInvestments[];
+}
+
+
 export interface ProviderAccount {
     vendorAccountId: string;
     label: string;
@@ -70,6 +93,10 @@ export interface Provider {
         opts: FetchTransactionsOptions,
         session: SessionManager
     ) => Promise<ProviderTransactionResponse | UserActionResponse>;
+    fetchInvestments: (
+        opts: FetchTransactionsOptions,
+        session: SessionManager
+    ) => Promise<ProviderInvestmentsResponse | UserActionResponse>;
 }
 
 function init() {
@@ -79,7 +106,8 @@ function init() {
         if (
             typeof handler.SOURCE_NAME === 'undefined' ||
             typeof handler.fetchAccounts === 'undefined' ||
-            typeof handler.fetchTransactions === 'undefined'
+            typeof handler.fetchTransactions === 'undefined' ||
+            typeof handler.fetchInvestments === 'undefined'
         ) {
             throw new KError("Backend doesn't implement basic functionality.");
         }

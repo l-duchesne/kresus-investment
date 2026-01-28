@@ -6,6 +6,7 @@ import {
     FetchAccountsOptions,
     Provider,
     ProviderAccountResponse,
+    ProviderInvestmentsResponse,
     ProviderTransactionResponse,
 } from '.';
 import Account from '../models/entities/accounts';
@@ -67,8 +68,13 @@ export const fetchTransactions = (): Promise<ProviderTransactionResponse> => {
     return Promise.resolve({ kind: 'values', values: [] });
 };
 
+export const fetchInvestments = (): Promise<ProviderInvestmentsResponse> => {
+    return Promise.resolve({ kind: 'values', values: [] });
+};
+
 export const _: Provider = {
     SOURCE_NAME,
     fetchAccounts,
     fetchTransactions,
+    fetchInvestments
 };

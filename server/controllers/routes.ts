@@ -16,6 +16,7 @@ import * as transactions from './transactions';
 import * as rules from './rules';
 import * as settings from './settings';
 import * as recurringTransactions from './recurring-transactions';
+import * as investment from './investments'
 
 const namespace = 'api';
 
@@ -88,6 +89,9 @@ const routes: RoutesDescriptor = {
     'accesses/:accessId/fetch/accounts': {
         post: accesses.fetchAccountsAndTransactions,
         put: accesses.updateAndFetchAccounts,
+    },
+    'accesses/:accessId/fetch/investments': {
+        post: accesses.fetchInvestments,
     },
 
     // Accounts
@@ -218,6 +222,14 @@ const routes: RoutesDescriptor = {
     'recurringTransactions/:recurringTransactionID': {
         delete: recurringTransactions.destroy,
         put: recurringTransactions.update,
+    },
+
+    // investment
+    'all/investments': {
+        get: investment.sumary
+    },
+    'all/investments/:type': {
+        get: investment.sumaryByType
     },
 };
 

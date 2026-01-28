@@ -9,7 +9,7 @@ class Cron {
 
     // A timeout identifier (created by setTimeout) used only to run the passed
     // function.
-    runTimeout: NodeJS.Timer | null;
+    runTimeout: NodeJS.Timeout | null;
 
     // Time in ms to the next run.
     timeToNextRun: number | null;

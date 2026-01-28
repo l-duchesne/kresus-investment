@@ -331,7 +331,7 @@ class Connector:
         """
         return Woob.VERSION
 
-    def __init__(self, woob_data_path, fakemodules_path, sources_list_content, is_prod):
+    def __init__(self, woob_data_path, fakemodules_path, sources_list_content, is_prod,custommodules_path):
         """
         Create a Woob instance.
 
@@ -345,7 +345,8 @@ class Connector:
         # By default, consider we don't need to update the repositories.
         self.needs_update = False
 
-        self.fakemodules_path = fakemodules_path
+        self.fakemodules_path = fakemodules_path   
+        self.custommodules_path = custommodules_path  
         self.sources_list_content = sources_list_content
 
         if not os.path.isdir(woob_data_path):
@@ -366,6 +367,8 @@ class Connector:
         if not is_prod:
             self.copy_fakemodules()
 
+        self.copy_custommodules()
+        
         # Update the woob repos only if new repos are included.
         if self.needs_update:
             self.update()
@@ -388,6 +391,25 @@ class Connector:
             shutil.rmtree(self.fakemodules_path)
         shutil.copytree(fakemodules_src, self.fakemodules_path)
 
+    def copy_custommodules(self):
+        """
+        Copies the custom modules files into the default custommodules user-data
+        directory.
+
+        When Woob updates modules, it might want to write within the
+        custommodules directory, which might not be writable by the current user.
+        To prevent this, first copy the custommodules directory in a directory we
+        have write access to, and then use that directory in the sources list
+        file.
+        """
+        custommodules_src = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "custommodules"
+        )
+        if os.path.isdir(self.custommodules_path):
+            shutil.rmtree(self.custommodules_path)
+        shutil.copytree(custommodules_src, self.custommodules_path)
+
+
     def write_woob_sources_list(self):
         """
         Ensure the Woob sources.list file contains the required entries from
@@ -404,6 +426,7 @@ class Connector:
             new_sources_list_content = [
                 unicode("https://updates.woob.tech/%(version)s/main/"),
                 unicode("file://%s" % self.fakemodules_path),
+                unicode("file://%s" % self.custommodules_path),
             ]
 
         # Read the content of existing sources.list, if it exists.
@@ -687,6 +710,56 @@ class Connector:
 
         return results
 
+    def get_investments(self):
+        results = []
+        with self.backend:
+            for account in list(self.backend.iter_accounts()):
+                # Get all investments for this account.
+                nyi_methods = []
+                investments = []
+
+                try:
+                    for hist_tr in self.backend.iter_investment(account):
+                        investments.append(hist_tr)
+
+                except NotImplementedError:
+                    nyi_methods.append("iter_history")
+
+
+                for method_name in nyi_methods:
+                    logging.error(
+                        ("%s not implemented for this account: %s."),
+                        method_name,
+                        account.id,
+                    )
+
+                # Build a transaction dict for each transaction.
+                for t in investments:
+                    label = None
+                    if not empty(t.label):
+                        label = unicode(t.label)
+
+                    results.append(
+                        {
+                            "account": account.id,
+                            "quantity":  t.quantity,
+                            "label": label,
+                            "unitprice"  : t.unitprice ,
+                            "unitvalue"  :t.unitvalue,
+                            "valuation"  :t.valuation,
+                            "diff"  : t.diff,
+                            "diff_ratio"  : t.diff_ratio,
+                            "externalId" : t.id,
+                            "code": t.code,
+                            "stocksymbol": t.stock_symbol,
+                            "stockmarket": t.stock_market,
+                            "assetcategory": t.asset_category
+                        }
+                    )
+
+        return results
+
+
     def fetch(self, which, from_date=None):
         """
         Wrapper to fetch data from the Woob connector.
@@ -711,6 +784,8 @@ class Connector:
                 results["values"] = self.get_accounts()
             elif which == "transactions":
                 results["values"] = self.get_transactions(from_date)
+            elif which == "investment":
+                results["values"] = self.get_investments()
             else:
                 raise Exception("Invalid fetch command.")
 
@@ -779,7 +854,7 @@ def main():
 
     parser.add_argument(
         "command",
-        choices=["test", "version", "transactions", "accounts"],
+        choices=["test", "version", "transactions", "accounts", "investment"],
         help="The command to be executed by the script",
     )
     parser.add_argument("--module", help="The Woob module name.")
@@ -850,6 +925,7 @@ def main():
             fakemodules_path=os.path.join(kresus_dir, "fakemodules"),
             sources_list_content=sources_list_content,
             is_prod=is_prod,
+            custommodules_path=os.path.join(kresus_dir, "custommodules")
         )
     except ConnectionError as exc:
         fail(
@@ -895,7 +971,7 @@ def main():
         print(json.dumps({}))
         sys.exit()
 
-    if command in ["accounts", "transactions"]:
+    if command in ["accounts", "transactions", "investment"]:
         if not options.module:
             fail_unset_field("Module")
 
